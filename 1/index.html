@@ -89,10 +89,13 @@
 <h1>Project 1</h1>
 <h2>Single-scale Implementation</h2>
 <p>
-    In this implementation, I align the parts by exhaustively searching over a window of possible displacements 
-    (from -15 to 15 pixels). For each possible displacement, I calculate a score using an image matching metric, 
-    and select the displacement with the best score. The image matching metric I use is Structural Similarity Index 
-    (SSIM) to evaluate the correct alignment between the images.
+    The algorithm computes the best displacement between two images as follows:
+    <ol>
+        <li>Exhaustively <strong>search</strong> over a window of possible displacements 
+            (from -15 to 15 pixels) around the center of one image.</li>
+        <li>For each possible displacement, calculate a <strong>score</strong> using Structural Similarity Index (SSIM).</li>
+        <li><strong>Select</strong> the displacement with the best score..</li>
+    </ol>
 </p>
 
 <div class="gallery">
@@ -118,6 +121,110 @@
         <div class="overlay">
             <div>G->B: [2, 3]</div>
             <div>R->B: [3, 6]</div>
+        </div>
+    </div>
+</div>
+
+<h2>Multi-scale Pyramid Implementation</h2>
+<p>
+    For larger images, the single-scale implementation proves to be too slow. I implemented a coarse-to-fine pyramid speedup to handle the .tif ones provided in the directory. Given two images, the algorithm works recursively as follows:
+</p>
+
+<ol>
+    <li><strong>Base case:</strong> If the images' max dimension is less than 400 pixels, return the single-scale algorithm's best displacement.</li>
+    <li><strong>Resize</strong> the two images to be half their size.</li>
+    <li><strong>Recursively</strong> pass the resized images to get the best displacement.</li>
+    <li>Going up the stack, take the previous call's displacement and <strong>double</strong> each coordinate.</li>
+    <li>Use this doubled-vector as the initial coordinates and <strong>search</strong> around a 2x2 window with the single-scale displacement algorithm.</li>
+</ol>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/church_pyramid.png" alt="Image 2">
+        <div class="caption">Church</div>
+        <div class="overlay">
+            <div>G->B: [2, -5]</div>
+            <div>R->B: [-4, 38]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/emir_pyramid.png" alt="Image 3">
+        <div class="caption">Emir</div>
+        <div class="overlay">
+            <div>G->B: [6, 34]</div>
+            <div>R->B: [50, 106]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/harvesters_pyramid.png" alt="Image 2">
+        <div class="caption">Harvesters</div>
+        <div class="overlay">
+            <div>G->B: [8, 58]</div>
+            <div>R->B: [6, 118]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/icon_pyramid.png" alt="Image 2">
+        <div class="caption">Icon</div>
+        <div class="overlay">
+            <div>G->B: [6, 44]</div>
+            <div>R->B: [14, 106]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/lady_pyramid.png" alt="Image 2">
+        <div class="caption">Lady</div>
+        <div class="overlay">
+            <div>G->B: [9, 54]</div>
+            <div>R->B: [14, 102]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/melons_naive.png" alt="Image 2">
+        <div class="caption">Melons</div>
+        <div class="overlay">
+            <div>G->B: [4, 70]</div>
+            <div>R->B: [12, 180]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/onion_church_pyramid.png" alt="Image 2">
+        <div class="caption">Onion Church</div>
+        <div class="overlay">
+            <div>G->B: [22, 50]</div>
+            <div>R->B: [6, 102]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sculpture_pyramid.png" alt="Image 2">
+        <div class="caption">Sculpture</div>
+        <div class="overlay">
+            <div>G->B: [-6, 28]</div>
+            <div>R->B: [-22, 138]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/self_portrait_pyramid.png" alt="Image 2">
+        <div class="caption">Self Portrait</div>
+        <div class="overlay">
+            <div>G->B: [22, 70]</div>
+            <div>R->B: [18, 166]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/three_generations_pyramid.png" alt="Image 2">
+        <div class="caption">Three Generations</div>
+        <div class="overlay">
+            <div>G->B: [6, 38]</div>
+            <div>R->B: [6, 102]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/train_pyramid.png" alt="Image 2">
+        <div class="caption">Train</div>
+        <div class="overlay">
+            <div>G->B: [6, 38]</div>
+            <div>R->B: [6, 85]</div>
         </div>
     </div>
 </div>
