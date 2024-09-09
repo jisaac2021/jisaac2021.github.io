@@ -1,15 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Project 1</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Image Display</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #ffffff;
+        }
+
+        p, li {
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: #000000;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;  /* Spacing between images */
+        }
+
+        .gallery-item {
+            position: relative;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .caption {
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 10px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+            background-color: #ffffff; /* White background */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            color: #333;
+            max-width: 200px; /* Adjust width as needed */
+            text-align: left;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-item {
+                width: 300px; /* Set width of each image container */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item {
+                width: 100%; /* Full width on small screens */
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Images</h1>
+
+<h1>Project 1</h1>
+<h2>Single-scale Implementation</h2>
+<p>
+    In this implementation, I align the parts by exhaustively searching over a window of possible displacements 
+    (from -15 to 15 pixels). For each possible displacement, I calculate a score using an image matching metric, 
+    and select the displacement with the best score. The image matching metric I use is Structural Similarity Index 
+    (SSIM) to evaluate the correct alignment between the images.
+</p>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/cathedral_naive.png" alt="Image 1">
+        <div class="caption">Cathedral</div>
+        <div class="overlay">
+            <div>G->B: [2, 5]</div>
+            <div>R->B: [3, 12]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/monastery_naive.png" alt="Image 2">
+        <div class="caption">Monastery</div>
+        <div class="overlay">
+            <div>G->B: [2, -3]</div>
+            <div>R->B: [2, 3]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/tobolsk_naive.png" alt="Image 3">
+        <div class="caption">Tobolsk</div>
+        <div class="overlay">
+            <div>G->B: [2, 3]</div>
+            <div>R->B: [3, 6]</div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
