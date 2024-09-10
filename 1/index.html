@@ -87,6 +87,10 @@
 <body>
 
 <h1>Project 1</h1>
+
+Sergei Mikhailovich Prokudin-Gorskii  was convinced, as early as 1907, that color photography was the wave of the future. His idea was simple: record three exposures of every scene onto a glass plate using a red, a green, and a blue filter. The goal of this project is to take the digitized Prokudin-Gorskii glass plate images and, using image processing techniques, automatically produce a color image with as few visual artifacts as possible. I will explain how I extract the three color channel images, place them on top of each other, and align them so that they form a single RGB color image.
+<img src="images/example_gray_scale.jpg" alt="Image 1">
+
 <h2>Single-scale Implementation</h2>
 <p>
     The algorithm computes the best displacement between two images as follows:
@@ -225,6 +229,131 @@
         <div class="overlay">
             <div>G->B: [6, 38]</div>
             <div>R->B: [6, 85]</div>
+        </div>
+    </div>
+</div>
+
+<h3> A few more images...</h3>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/sunset.png" alt="Image 2">
+        <div class="caption">Sunset</div>
+        <div class="overlay">
+            <div>G->B: [2, -5]</div>
+            <div>R->B: [-4, 38]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/woman.png" alt="Image 3">
+        <div class="caption">Woman</div>
+        <div class="overlay">
+            <div>G->B: [6, 34]</div>
+            <div>R->B: [50, 106]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/vase.png" alt="Image 2">
+        <div class="caption">Vase</div>
+        <div class="overlay">
+            <div>G->B: [8, 58]</div>
+            <div>R->B: [6, 118]</div>
+        </div>
+    </div>
+</div>
+
+<h2>Bells & Whistles: Automatic Cropping</h2>
+<p>
+    I created an algorithm to detect borders around the images, which I assumed could be a possible culprit for noise. My idea was to use variance as a proxy for edge detection since the border seems to be almost fully one color. I calculate column-wise and row-wise variance and set a threshold so that any variance greater than the threshold must no longer be a border. My cropping method was able to fully crop out both the black and white borders around the image, but only slightly sharpened the image.
+</p>
+
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/church_extra.png" alt="Image 2">
+        <div class="caption">Church</div>
+        <div class="overlay">
+            <div>G->B: [3, -2]</div>
+            <div>R->B: [-4, 38]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/emir_extra.png" alt="Image 3">
+        <div class="caption">Emir</div>
+        <div class="overlay">
+            <div>G->B: [6, 34]</div>
+            <div>R->B: [50, 86]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/harvesters_extra.png" alt="Image 2">
+        <div class="caption">Harvesters</div>
+        <div class="overlay">
+            <div>G->B: [6, 54]</div>
+            <div>R->B: [6, 118]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/icon_extra.png" alt="Image 2">
+        <div class="caption">Icon</div>
+        <div class="overlay">
+            <div>G->B: [6, 44]</div>
+            <div>R->B: [22, 104]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/lady_extra.png" alt="Image 2">
+        <div class="caption">Lady</div>
+        <div class="overlay">
+            <div>G->B: [8, 54]</div>
+            <div>R->B: [14, 102]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/melons_extra.png" alt="Image 2">
+        <div class="caption">Melons</div>
+        <div class="overlay">
+            <div>G->B: [7, 70]</div>
+            <div>R->B: [10, 180]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/onion_church_extra.png" alt="Image 2">
+        <div class="caption">Onion Church</div>
+        <div class="overlay">
+            <div>G->B: [21, 37]</div>
+            <div>R->B: [6, 102]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sculpture_extra.png" alt="Image 2">
+        <div class="caption">Sculpture</div>
+        <div class="overlay">
+            <div>G->B: [-6, 28]</div>
+            <div>R->B: [-22, 146]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/self_portrait_extra.png" alt="Image 2">
+        <div class="caption">Self Portrait</div>
+        <div class="overlay">
+            <div>G->B: [22, 70]</div>
+            <div>R->B: [22, 166]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/three_generations_extra.png" alt="Image 2">
+        <div class="caption">Three Generations</div>
+        <div class="overlay">
+            <div>G->B: [6, 38]</div>
+            <div>R->B: [6, 102]</div>
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/train_extra.png" alt="Image 2">
+        <div class="caption">Train</div>
+        <div class="overlay">
+            <div>G->B: [6, 38]</div>
+            <div>R->B: [6, 102]</div>
         </div>
     </div>
 </div>
