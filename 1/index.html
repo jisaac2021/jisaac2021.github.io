@@ -88,8 +88,10 @@
 
 <h1>Project 1</h1>
 
-Sergei Mikhailovich Prokudin-Gorskii  was convinced, as early as 1907, that color photography was the wave of the future. His idea was simple: record three exposures of every scene onto a glass plate using a red, a green, and a blue filter. The goal of this project is to take the digitized Prokudin-Gorskii glass plate images and, using image processing techniques, automatically produce a color image with as few visual artifacts as possible. I will explain how I extract the three color channel images, place them on top of each other, and align them so that they form a single RGB color image.
-<img src="images/example_gray_scale.jpg" alt="Image 1">
+<p>
+    Sergei Mikhailovich Prokudin-Gorskii  was convinced, as early as 1907, that color photography was the wave of the future. His idea was simple: record three exposures of every scene onto a glass plate using a red, a green, and a blue filter. The goal of this project is to take the digitized Prokudin-Gorskii glass plate images and, using image processing techniques, automatically produce a color image with as few visual artifacts as possible. I will explain how I extract the three color channel images, place them on top of each other, and align them so that they form a single RGB color image.
+</p>
+<img src="images/example_gray_scale.jpg" alt="Image 1" style="width: 150px; height: 400px;">
 
 <h2>Single-scale Implementation</h2>
 <p>
@@ -352,8 +354,8 @@ Sergei Mikhailovich Prokudin-Gorskii  was convinced, as early as 1907, that colo
         <img src="images/train_extra.png" alt="Image 2">
         <div class="caption">Train</div>
         <div class="overlay">
-            <div>G->B: [6, 38]</div>
-            <div>R->B: [6, 102]</div>
+            <div>G->B: [-2, 38]</div>
+            <div>R->B: [34, 85]</div>
         </div>
     </div>
 </div>
