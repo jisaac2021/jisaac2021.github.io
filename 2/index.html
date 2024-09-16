@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julia's Project 2 Image Display</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        p,
+        li {
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #000000;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            /* Spacing between images */
+        }
+
+        .gallery-item {
+            position: relative;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            /* Adjust the width as needed */
+            height: auto;
+        }
+
+        figure {
+            margin: 0;
+            width: 100%;
+            /* Adjust the width as needed */
+            text-align: center;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .caption {
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 10px;
+            /* Adjust as needed */
+            right: 10px;
+            /* Adjust as needed */
+            background-color: #ffffff;
+            /* White background */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            color: #333;
+            max-width: 200px;
+            /* Adjust width as needed */
+            text-align: left;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-item {
+                width: 300px;
+                /* Set width of each image container */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item {
+                width: 100%;
+                /* Full width on small screens */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Project 2</h1>
+    <h2>Part 1: Fun with Filters</h2>
+    <p>
+        Build intuition about 2D convolutions and filtering!
+    <div>
+        <img src="images/cameraman.png" alt="cameraman" width="50%"> <br>
+    </div>
+    </p>
+
+    <h3>Finite Difference Operator</h3>
+    <p>
+        $$ D_x = \left[ 1 \ -1 \right], \quad D_y = \left[ \begin{array}{c} 1 \\ -1 \end{array} \right] $$
+        $$ C_x = \text{cameraman} * D_x, \quad C_y = \text{cameraman} * D_y $$
+
+        $$ G_m = \sqrt{{C_x}^2 + {C_y}^2}, \quad G_e =\begin{cases}
+        1 & \text{if } G_m > 0.2 \\
+        0 & \text{otherwise}
+        \end{cases} $$
+    </p>
+    <p>
+    <div class="image-container">
+
+        <figure>
+            <img src="images/deriv_x.png" alt="Derivative X">
+            <figcaption>$$ C_x $$</figcaption>
+        </figure>
+
+        <figure>
+            <img src="images/deriv_Y.png" alt="Derivative Y">
+            <figcaption>$$ C_y $$</figcaption>
+        </figure>
+    </div>
+    </p>
+    <p>
+    <div class="image-container">
+        <figure>
+            <img src="images/Gm.png" alt="Gradient(mag)">
+            <figcaption>$$ G_m $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/edge.png" alt="First Image">
+            <figcaption>$$ G_e $$ </figcaption>
+        </figure>
+        </p>
+
+</body>
+
+</html>
