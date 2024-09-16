@@ -49,33 +49,34 @@
             display: block;
         }
 
-        .image-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .image-container img {
+        width: 100%;
+        height: auto;
+    }
 
-        .image-container img {
-            max-width: 100%;
-            /* Adjust the width as needed */
-            height: auto;
-        }
+    .image-container figure {
+        margin: 0 1px;
+        width: 150px;
+        text-align: center;
+        display: inline-block;
+        vertical-align: top; 
+    }
 
-        figure {
-            margin: 0;
-            width: 100%;
-            /* Adjust the width as needed */
-            text-align: center;
-        }
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; 
+    }
+
 
         figcaption {
-            margin-top: 8px;
+            margin-top: 0px;
             font-style: italic;
         }
 
         .caption {
-            padding: 10px;
-            font-size: 16px;
+            padding: 5px;
+            font-size: 15px;
             color: #333;
             background-color: #f4f4f4;
         }
@@ -87,7 +88,6 @@
             right: 10px;
             /* Adjust as needed */
             background-color: #ffffff;
-            /* White background */
             border: 1px solid #ddd;
             border-radius: 5px;
             padding: 10px;
@@ -95,13 +95,12 @@
             font-size: 14px;
             color: #333;
             max-width: 200px;
-            /* Adjust width as needed */
             text-align: left;
         }
 
         pre {
             background-color: #f4f4f4;
-            padding: 10px;
+            padding: 5px;
             border-radius: 5px;
             overflow-x: auto;
         }
@@ -109,14 +108,12 @@
         @media (min-width: 768px) {
             .gallery-item {
                 width: 300px;
-                /* Set width of each image container */
             }
         }
 
         @media (max-width: 768px) {
             .gallery-item {
                 width: 100%;
-                /* Full width on small screens */
             }
         }
     </style>
@@ -153,16 +150,62 @@
             <figcaption>$$ C_y $$</figcaption>
         </figure>
         <figure>
-            <img src="images/Gm.png" alt="Gradient(mag)">
+            <img src="images/gradient_mag.png" alt="Gradient(mag)">
             <figcaption>$$ G_m $$</figcaption>
         </figure>
         <figure>
-            <img src="images/edge.png" alt="First Image">
+            <img src="images/edges.png" alt="First Image">
             <figcaption>$$ G_e $$ </figcaption>
         </figure>
     </div>
     </p>
-
+    <h3>Derivative of Gaussian (DoG) Filter</h3>
+    We noted that the results with just the difference operator were rather noisy. Luckily, we have a smoothing operator handy: the Gaussian filter G. Here, I create a blurred version of the original image by convolving with a Gaussian (width=5 and SD=1) and repeat the procedure in the previous part.
+    <p>
+        <div class="image-container">
+            <figure>
+                <img src="images/deriv_x_b.png" alt="Derivative X">
+                <figcaption>$$ C_x $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/deriv_y_b.png" alt="Derivative Y">
+                <figcaption>$$ C_y $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/gradient_mag_b.png" alt="Gradient(mag)">
+                <figcaption>$$ G_m $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/edges_b.png" alt="First Image">
+                <figcaption>$$ G_e $$ </figcaption>
+            </figure>
+        </div>
+        Much less noisy! Derivatives are much stronger, which results in a clearer and thicker final edge detection.
+        <br>
+        <br>Now we can do the same thing with a single convolution instead of two by creating a derivative of gaussian filters.
+        </p>
+        $$ G_x = \frac{d}{dx} G, \quad G_y = \frac{d}{dy} G $$
+        <p>
+            <div class="image-container">
+                <figure>
+                    <img src="images/Gx.png" alt="Derivative X">
+                    <figcaption>$$ G_x $$</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/Gy.png" alt="Derivative Y">
+                    <figcaption>$$ G_y $$</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/gradient_mag_b2.png" alt="Gradient(mag)">
+                    <figcaption>$$ G_m $$</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/edges_b2.png" alt="First Image">
+                    <figcaption>$$ G_e $$ </figcaption>
+                </figure>
+            </div>
+            They are the same! Except now we saved one operation...
+            </p>
 </body>
 
 </html>
