@@ -320,6 +320,8 @@
                     <figcaption>$$ \alpha=10 $$</figcaption>
                 </figure>
             </div>
+            The original agama compared to the blurred then sharpened agama does a decent job, but obviously has some errors. With alpha=2, the edges look realistic but it's not sharpened enough – we lose a lot of the details on the agama scales.
+            For alpha=5, we do a much better job of getting the details of the scales, but now there is more noise in the image. For example, we are now hallucinating some colors. Around each scale, there is some orange hue that did not exist in the original image. The borders are also no longer smooth like alpha=2.
             </p>
 
 
