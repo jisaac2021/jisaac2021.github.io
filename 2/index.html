@@ -211,7 +211,14 @@
     <h2>Part 2: Fun with Frequencies!</h2>
     <!-- <img src="images/taj.jpg" alt="cameraman" width="30%"> <br> -->
     <h4>Image "Sharpening"</h4>
+    Unsharp masking technique:
+        <ol>
+            <li>Use Gaussian as a low pass filter to blur image. </li>
+            <li>Extract high frequencies from an image by subtracting the blurred version from the original image.</li>
+            <li>Apply unsharp mask filter by adding $$ \alpha * high frequencies $$ to the original image.</li>
+        </ol>
     <p>
+    
         <div class="image-container">
             <figure>
                 <img src="images/taj.jpg" alt="Alpha 0">
