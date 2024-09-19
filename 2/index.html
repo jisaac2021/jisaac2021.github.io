@@ -49,25 +49,25 @@
             display: block;
         }
 
-.image-container img {
-    width: 200px;
-    height: auto;
-}
+        .image-container img {
+            width: 200px;
+            height: auto;
+        }
 
-.image-container figure {
-    margin: 0 10px;
-    width: 200px;
-    text-align: center;
-    display: inline-block;
-    vertical-align: top;
-}
+        .image-container figure {
+            margin: 0 10px;
+            width: 200px;
+            text-align: center;
+            display: inline-block;
+            vertical-align: top;
+        }
 
-.image-container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    flex-wrap: wrap;
-}
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
 
 
         figcaption {
@@ -126,7 +126,7 @@
     <h2>Part 1: Fun with Filters</h2>
     <p>
         Build intuition about 2D convolutions and filtering! <br>
-    <img src="images/cameraman.png" alt="cameraman" width="30%"> <br>
+        <img src="images/cameraman.png" alt="cameraman" width="30%"> <br>
     </p>
 
     <h3>Finite Difference Operator</h3>
@@ -161,74 +161,76 @@
     </div>
     </p>
     <h3>Derivative of Gaussian (DoG) Filter</h3>
-    We noted that the results with just the difference operator were rather noisy. Luckily, we have a smoothing operator handy: the Gaussian filter G. Here, I create a blurred version of the original image by convolving with a Gaussian (width=5 and SD=1) and repeat the procedure in the previous part.
+    We noted that the results with just the difference operator were rather noisy. Luckily, we have a smoothing operator
+    handy: the Gaussian filter G. Here, I create a blurred version of the original image by convolving with a Gaussian
+    (width=5 and SD=1) and repeat the procedure in the previous part.
     <p>
+    <div class="image-container">
+        <figure>
+            <img src="images/deriv_x_b.png" alt="Derivative X">
+            <figcaption>$$ C_x $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/deriv_y_b.png" alt="Derivative Y">
+            <figcaption>$$ C_y $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/gradient_mag_b.png" alt="Gradient(mag)">
+            <figcaption>$$ G_m $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/edges_b.png" alt="First Image">
+            <figcaption>$$ G_e $$ </figcaption>
+        </figure>
+    </div>
+    Much less noisy! Derivatives are much stronger, which results in a clearer and thicker final edge detection.
+    <br>
+    <br>Now we can do the same thing with a single convolution instead of two by creating a derivative of gaussian
+    filters.
+    </p>
+    $$ G_x = \frac{d}{dx} G, \quad G_y = \frac{d}{dy} G $$
+    <p>
+    <div class="image-container">
+        <figure>
+            <img src="images/Gx.png" alt="Derivative X">
+            <figcaption>$$ G_x $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/Gy.png" alt="Derivative Y">
+            <figcaption>$$ G_y $$</figcaption>
+        </figure>
+        <p>
         <div class="image-container">
             <figure>
-                <img src="images/deriv_x_b.png" alt="Derivative X">
+                <img src="images/deriv_x_b2.png" alt="Derivative X">
                 <figcaption>$$ C_x $$</figcaption>
             </figure>
             <figure>
-                <img src="images/deriv_y_b.png" alt="Derivative Y">
+                <img src="images/deriv_y_b2.png" alt="Derivative Y">
                 <figcaption>$$ C_y $$</figcaption>
             </figure>
             <figure>
-                <img src="images/gradient_mag_b.png" alt="Gradient(mag)">
+                <img src="images/gradient_mag_b2.png" alt="Gradient(mag)">
                 <figcaption>$$ G_m $$</figcaption>
             </figure>
             <figure>
-                <img src="images/edges_b.png" alt="First Image">
+                <img src="images/edges_b2.png" alt="First Image">
                 <figcaption>$$ G_e $$ </figcaption>
             </figure>
         </div>
-        Much less noisy! Derivatives are much stronger, which results in a clearer and thicker final edge detection.
-        <br>
-        <br>Now we can do the same thing with a single convolution instead of two by creating a derivative of gaussian filters.
+        They are the same! Except now we saved one operation...
         </p>
-        $$ G_x = \frac{d}{dx} G, \quad G_y = \frac{d}{dy} G $$
-        <p>
-            <div class="image-container">
-                <figure>
-                    <img src="images/Gx.png" alt="Derivative X">
-                    <figcaption>$$ G_x $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/Gy.png" alt="Derivative Y">
-                    <figcaption>$$ G_y $$</figcaption>
-                </figure>
-        <p>
-            <div class="image-container">
-                <figure>
-                    <img src="images/deriv_x_b2.png" alt="Derivative X">
-                    <figcaption>$$ C_x $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/deriv_y_b2.png" alt="Derivative Y">
-                    <figcaption>$$ C_y $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/gradient_mag_b2.png" alt="Gradient(mag)">
-                    <figcaption>$$ G_m $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/edges_b2.png" alt="First Image">
-                    <figcaption>$$ G_e $$ </figcaption>
-                </figure>
-            </div>
-            They are the same! Except now we saved one operation...
-            </p>
-
-    <h2>Part 2: Fun with Frequencies!</h2>
-    <!-- <img src="images/taj.jpg" alt="cameraman" width="30%"> <br> -->
-    <h4>Image "Sharpening"</h4>
+        </div>
+        <h2>Part 2: Fun with Frequencies!</h2>
+        <h3>Image "Sharpening"</h3>
     Unsharp masking technique:
-        <ol>
-            <li>Use Gaussian as a low pass filter to blur image. </li>
-            <li>Extract high frequencies from an image by subtracting the blurred version from the original image.</li>
-            <li>Apply unsharp mask filter by adding $$ \alpha * high frequencies $$ to the original image.</li>
-        </ol>
-    <p>
-    
+    <ol>
+        <li>Use Gaussian as a low pass filter to blur image. </li>
+        <li>Extract high frequencies from an image by subtracting the blurred version from the original image.</li>
+        <li>Apply unsharp mask filter by adding $$ \alpha * high frequencies $$ to the original image.</li>
+    </ol>
+
+        <p>
         <div class="image-container">
             <figure>
                 <img src="images/taj.jpg" alt="Alpha 0">
@@ -253,93 +255,97 @@
         </div>
         </p>
         <p>
-            <div class="image-container">
-                <figure>
-                    <img src="images/turtle.jpg" alt="Alpha 0">
-                    <figcaption>$$ \alpha=0 $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/turtle_1.png" alt="Alpha 1">
-                    <figcaption>$$ \alpha=1 $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/turtle_2.png" alt="Alpha 2">
-                    <figcaption>$$ \alpha=2 $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/turtle_5.png" alt="Alpha 5">
-                    <figcaption>$$ \alpha=5 $$ </figcaption>
-                </figure>
-                <figure>
-                    <img src="images/turtle_10.png" alt="Alpha 10">
-                    <figcaption>$$ \alpha=10 $$</figcaption>
-                </figure>
-            </div>
-            </p>
-            <p>
-                <div class="image-container">
-                    <figure>
-                        <img src="images/plane.jpg" alt="Alpha 0">
-                        <figcaption>$$ \alpha=0 $$</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="images/plane_1.png" alt="Alpha 1">
-                        <figcaption>$$ \alpha=1 $$</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="images/plane_2.png" alt="Alpha 2">
-                        <figcaption>$$ \alpha=2 $$</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="images/plane_5.png" alt="Alpha 5">
-                        <figcaption>$$ \alpha=5 $$ </figcaption>
-                    </figure>
-                    <figure>
-                        <img src="images/plane_10.png" alt="Alpha 10">
-                        <figcaption>$$ \alpha=10 $$</figcaption>
-                    </figure>
-                </div>
-                </p>
+        <div class="image-container">
+            <figure>
+                <img src="images/turtle.jpg" alt="Alpha 0">
+                <figcaption>$$ \alpha=0 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/turtle_1.png" alt="Alpha 1">
+                <figcaption>$$ \alpha=1 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/turtle_2.png" alt="Alpha 2">
+                <figcaption>$$ \alpha=2 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/turtle_5.png" alt="Alpha 5">
+                <figcaption>$$ \alpha=5 $$ </figcaption>
+            </figure>
+            <figure>
+                <img src="images/turtle_10.png" alt="Alpha 10">
+                <figcaption>$$ \alpha=10 $$</figcaption>
+            </figure>
+        </div>
+        </p>
+        <p>
+        <div class="image-container">
+            <figure>
+                <img src="images/plane.jpg" alt="Alpha 0">
+                <figcaption>$$ \alpha=0 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/plane_1.png" alt="Alpha 1">
+                <figcaption>$$ \alpha=1 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/plane_2.png" alt="Alpha 2">
+                <figcaption>$$ \alpha=2 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/plane_5.png" alt="Alpha 5">
+                <figcaption>$$ \alpha=5 $$ </figcaption>
+            </figure>
+            <figure>
+                <img src="images/plane_10.png" alt="Alpha 10">
+                <figcaption>$$ \alpha=10 $$</figcaption>
+            </figure>
+        </div>
+        </p>
         Blurring then sharpening an image ("sanity check").
         <p>
-            <div class="image-container">
-        
-                <figure>
-                    <img src="images/agama.jpg" alt="Derivative X">
-                    <figcaption> Agama </figcaption>
-                </figure>
-                <figure>
-                    <img src="images/agama_blurred.png" alt="Derivative Y">
-                    <figcaption> Agama Blurred </figcaption>
-                </figure>
-            </div>
-            </p>
+        <div class="image-container">
+
+            <figure>
+                <img src="images/agama.jpg" alt="Derivative X">
+                <figcaption> Agama </figcaption>
+            </figure>
+            <figure>
+                <img src="images/agama_blurred.png" alt="Derivative Y">
+                <figcaption> Agama Blurred </figcaption>
+            </figure>
+        </div>
+        </p>
         <p>
-            <div class="image-container">
-                <figure>
-                    <img src="images/agama_blurred.png" alt="Alpha 0">
-                    <figcaption>$$ \alpha=0 $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/agama_1.png" alt="Alpha 1">
-                    <figcaption>$$ \alpha=1 $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/agama_2.png" alt="Alpha 2">
-                    <figcaption>$$ \alpha=2 $$</figcaption>
-                </figure>
-                <figure>
-                    <img src="images/agama_5.png" alt="Alpha 5">
-                    <figcaption>$$ \alpha=5 $$ </figcaption>
-                </figure>
-                <figure>
-                    <img src="images/agama_5.png" alt="Alpha 10">
-                    <figcaption>$$ \alpha=10 $$</figcaption>
-                </figure>
-            </div>
-            The original agama compared to the blurred then sharpened agama does a decent job, but obviously has some errors. With alpha=2, the edges look realistic but it's not sharpened enough – we lose a lot of the details on the agama scales.
-            For alpha=5, we do a much better job of getting the details of the scales, but now there is more noise in the image. For example, we are now hallucinating some colors. Around each scale, there is some orange hue that did not exist in the original image. The borders are also no longer smooth like alpha=2.
-            </p>
+        <div class="image-container">
+            <figure>
+                <img src="images/agama_blurred.png" alt="Alpha 0">
+                <figcaption>$$ \alpha=0 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/agama_1.png" alt="Alpha 1">
+                <figcaption>$$ \alpha=1 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/agama_2.png" alt="Alpha 2">
+                <figcaption>$$ \alpha=2 $$</figcaption>
+            </figure>
+            <figure>
+                <img src="images/agama_5.png" alt="Alpha 5">
+                <figcaption>$$ \alpha=5 $$ </figcaption>
+            </figure>
+            <figure>
+                <img src="images/agama_5.png" alt="Alpha 10">
+                <figcaption>$$ \alpha=10 $$</figcaption>
+            </figure>
+        </div>
+        The original agama compared to the blurred then sharpened agama does a decent job, but obviously has some
+        errors. With alpha=2, the edges look realistic but it's not sharpened enough – we lose a lot of the details on
+        the agama scales.
+        For alpha=5, we do a much better job of getting the details of the scales, but now there is more noise in the
+        image. For example, we are now hallucinating some colors. Around each scale, there is some orange hue that did
+        not exist in the original image. The borders are also no longer smooth like alpha=2.
+        </p>
 
 
 </body>
