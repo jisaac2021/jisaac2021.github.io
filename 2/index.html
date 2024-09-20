@@ -62,6 +62,26 @@
             vertical-align: top;
         }
 
+        .image-container-s {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .image-container-s img {
+            width: 30px;
+            height: auto;
+        }
+
+        .image-container-s figure {
+            margin: 0 10px;
+            width: 30px;
+            text-align: center;
+            display: inline-block;
+            vertical-align: top;
+        }
+
         .image-container {
             display: flex;
             justify-content: center;
@@ -230,123 +250,230 @@
         <li>Apply unsharp mask filter by adding $$ \alpha * high frequencies $$ to the original image.</li>
     </ol>
 
-        <p>
-        <div class="image-container">
-            <figure>
-                <img src="images/taj.jpg" alt="Alpha 0">
-                <figcaption>$$ \alpha=0 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/taj_1.png" alt="Alpha 1">
-                <figcaption>$$ \alpha=1 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/taj_2.png" alt="Alpha 2">
-                <figcaption>$$ \alpha=2 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/taj_5.png" alt="Alpha 5">
-                <figcaption>$$ \alpha=5 $$ </figcaption>
-            </figure>
-            <figure>
-                <img src="images/taj_10.png" alt="Alpha 10">
-                <figcaption>$$ \alpha=10 $$</figcaption>
-            </figure>
-        </div>
-        </p>
-        <p>
-        <div class="image-container">
-            <figure>
-                <img src="images/turtle.jpg" alt="Alpha 0">
-                <figcaption>$$ \alpha=0 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/turtle_1.png" alt="Alpha 1">
-                <figcaption>$$ \alpha=1 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/turtle_2.png" alt="Alpha 2">
-                <figcaption>$$ \alpha=2 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/turtle_5.png" alt="Alpha 5">
-                <figcaption>$$ \alpha=5 $$ </figcaption>
-            </figure>
-            <figure>
-                <img src="images/turtle_10.png" alt="Alpha 10">
-                <figcaption>$$ \alpha=10 $$</figcaption>
-            </figure>
-        </div>
-        </p>
-        <p>
-        <div class="image-container">
-            <figure>
-                <img src="images/plane.jpg" alt="Alpha 0">
-                <figcaption>$$ \alpha=0 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/plane_1.png" alt="Alpha 1">
-                <figcaption>$$ \alpha=1 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/plane_2.png" alt="Alpha 2">
-                <figcaption>$$ \alpha=2 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/plane_5.png" alt="Alpha 5">
-                <figcaption>$$ \alpha=5 $$ </figcaption>
-            </figure>
-            <figure>
-                <img src="images/plane_10.png" alt="Alpha 10">
-                <figcaption>$$ \alpha=10 $$</figcaption>
-            </figure>
-        </div>
-        </p>
-        Blurring then sharpening an image ("sanity check").
-        <p>
-        <div class="image-container">
+    <p>
+    <div class="image-container">
+        <figure>
+            <img src="images/taj.jpg" alt="Alpha 0">
+            <figcaption>$$ \alpha=0 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/taj_1.png" alt="Alpha 1">
+            <figcaption>$$ \alpha=1 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/taj_2.png" alt="Alpha 2">
+            <figcaption>$$ \alpha=2 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/taj_5.png" alt="Alpha 5">
+            <figcaption>$$ \alpha=5 $$ </figcaption>
+        </figure>
+        <figure>
+            <img src="images/taj_10.png" alt="Alpha 10">
+            <figcaption>$$ \alpha=10 $$</figcaption>
+        </figure>
+    </div>
+    </p>
+    <p>
+    <div class="image-container">
+        <figure>
+            <img src="images/turtle.jpg" alt="Alpha 0">
+            <figcaption>$$ \alpha=0 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/turtle_1.png" alt="Alpha 1">
+            <figcaption>$$ \alpha=1 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/turtle_2.png" alt="Alpha 2">
+            <figcaption>$$ \alpha=2 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/turtle_5.png" alt="Alpha 5">
+            <figcaption>$$ \alpha=5 $$ </figcaption>
+        </figure>
+        <figure>
+            <img src="images/turtle_10.png" alt="Alpha 10">
+            <figcaption>$$ \alpha=10 $$</figcaption>
+        </figure>
+    </div>
+    </p>
+    <p>
+    <div class="image-container">
+        <figure>
+            <img src="images/plane.jpg" alt="Alpha 0">
+            <figcaption>$$ \alpha=0 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/plane_1.png" alt="Alpha 1">
+            <figcaption>$$ \alpha=1 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/plane_2.png" alt="Alpha 2">
+            <figcaption>$$ \alpha=2 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/plane_5.png" alt="Alpha 5">
+            <figcaption>$$ \alpha=5 $$ </figcaption>
+        </figure>
+        <figure>
+            <img src="images/plane_10.png" alt="Alpha 10">
+            <figcaption>$$ \alpha=10 $$</figcaption>
+        </figure>
+    </div>
+    </p>
+    Blurring then sharpening an image ("sanity check").
+    <p>
+    <div class="image-container">
 
-            <figure>
-                <img src="images/agama.jpg" alt="Derivative X">
-                <figcaption> Agama </figcaption>
-            </figure>
-            <figure>
-                <img src="images/agama_blurred.png" alt="Derivative Y">
-                <figcaption> Agama Blurred </figcaption>
-            </figure>
-        </div>
-        </p>
-        <p>
-        <div class="image-container">
-            <figure>
-                <img src="images/agama_blurred.png" alt="Alpha 0">
-                <figcaption>$$ \alpha=0 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/agama_1.png" alt="Alpha 1">
-                <figcaption>$$ \alpha=1 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/agama_2.png" alt="Alpha 2">
-                <figcaption>$$ \alpha=2 $$</figcaption>
-            </figure>
-            <figure>
-                <img src="images/agama_5.png" alt="Alpha 5">
-                <figcaption>$$ \alpha=5 $$ </figcaption>
-            </figure>
-            <figure>
-                <img src="images/agama_5.png" alt="Alpha 10">
-                <figcaption>$$ \alpha=10 $$</figcaption>
-            </figure>
-        </div>
-        The original agama compared to the blurred then sharpened agama does a decent job, but obviously has some
-        errors. With alpha=2, the edges look realistic but it's not sharpened enough – we lose a lot of the details on
-        the agama scales.
-        For alpha=5, we do a much better job of getting the details of the scales, but now there is more noise in the
-        image. For example, we are now hallucinating some colors. Around each scale, there is some orange hue that did
-        not exist in the original image. The borders are also no longer smooth like alpha=2.
-        </p>
+        <figure>
+            <img src="images/agama.jpg" alt="Derivative X">
+            <figcaption> Agama </figcaption>
+        </figure>
+        <figure>
+            <img src="images/agama_blurred.png" alt="Derivative Y">
+            <figcaption> Agama Blurred </figcaption>
+        </figure>
+    </div>
+    </p>
+    <p>
+    <div class="image-container">
+        <figure>
+            <img src="images/agama_blurred.png" alt="Alpha 0">
+            <figcaption>$$ \alpha=0 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/agama_1.png" alt="Alpha 1">
+            <figcaption>$$ \alpha=1 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/agama_2.png" alt="Alpha 2">
+            <figcaption>$$ \alpha=2 $$</figcaption>
+        </figure>
+        <figure>
+            <img src="images/agama_5.png" alt="Alpha 5">
+            <figcaption>$$ \alpha=5 $$ </figcaption>
+        </figure>
+        <figure>
+            <img src="images/agama_5.png" alt="Alpha 10">
+            <figcaption>$$ \alpha=10 $$</figcaption>
+        </figure>
+    </div>
+    The original agama compared to the blurred then sharpened agama does a decent job, but obviously has some
+    errors. With alpha=2, the edges look realistic but it's not sharpened enough – we lose a lot of the details on
+    the agama scales.
+    For alpha=5, we do a much better job of getting the details of the scales, but now there is more noise in the
+    image. For example, we are now hallucinating some colors. Around each scale, there is some orange hue that did
+    not exist in the original image. The borders are also no longer smooth like alpha=2.
+    </p>
 
+    <h3>Hybrid Images</h3>
+    <div class="image-container">
+        <figure>
+            <img src="images/DerekPicture.jpg" alt="Efros">
+            <figcaption>Low Frequency</figcaption>
+        </figure>
+        <figure>
+            <img src="images/nutmeg.jpg" alt="Dog">
+            <figcaption>High Frequency</figcaption>
+        </figure>
+        <figure>
+            <img src="images/derek_nutmeg.png" alt="Hybrid">
+            <figcaption>Close</figcaption>
+        </figure>
+    </div>
+    <div class="image-container-s">
+        <figure>
+            <img src="images/derek_afar.png" alt="Hybrid">
+            <figcaption>Afar</figcaption>
+        </figure>
+    </div>
+    <div class="image-container">
+        <figure>
+            <img src="images/shocked.jpg" alt="Shocked">
+            <figcaption>Low Frequency</figcaption>
+        </figure>
+        <figure>
+            <img src="images/frown.jpg" alt="Frown">
+            <figcaption>High Frequency</figcaption>
+        </figure>
+        <figure>
+            <img src="images/shocked_frown.png" alt="Hybrid">
+            <figcaption>Close</figcaption>
+        </figure>
+    </div>
+    <div class="image-container-s">
+        <figure>
+            <img src="images/afar2.png" alt="Hybrid">
+            <figcaption>Afar</figcaption>
+        </figure>
+    </div>
+    Failure?
+    <div class="image-container">
+        <figure>
+            <img src="images/potato.jpeg" alt="Shocked">
+            <figcaption>Low Frequency</figcaption>
+        </figure>
+        <figure>
+            <img src="images/leprechaun.jpg" alt="Frown">
+            <figcaption>High Frequency</figcaption>
+        </figure>
+        <figure>
+            <img src="images/potato_leprechaun.png" alt="Hybrid">
+            <figcaption>Close</figcaption>
+        </figure>
+    </div>
+    <div class="image-container-s">
+        <figure>
+            <img src="images/afar_potato.png" alt="Hybrid">
+            <figcaption>Afar</figcaption>
+        </figure>
+    </div>
+    The potato can be seen too much in the close up, whereas leprechaun's appears too shadowy. Better alignment will most likely fix this issue, specifically shrinking the potato to be behind the leprechaun.
+    <h4> Favorite!!! </h4>
+    <div class="image-container">
+        <figure>
+            <img src="images/efros.jpeg" alt="Efros">
+            <figcaption>Low Frequency</figcaption>
+        </figure>
+        <figure>
+            <img src="images/dog.jpg" alt="Dog">
+            <figcaption>High Frequency</figcaption>
+        </figure>
+        <figure>
+            <img src="images/efros_dog.png" alt="Hybrid">
+            <figcaption>Close</figcaption>
+        </figure>
+    </div>
+    <div class="image-container-s">
+        <figure>
+            <img src="images/afar.png" alt="Hybrid">
+            <figcaption>Afar</figcaption>
+        </figure>
+    </div>
+    <h4>Frequency Analysis of Favorite</h4>
+    <div class="image-container">
+        <figure>
+            <img src="images/im1_fft.png" alt="Efros">
+            <figcaption>Log FFT(Efros) </figcaption>
+        </figure>
+        <figure>
+            <img src="images/im2_fft.png" alt="Dog">
+            <figcaption>Log FFT(Dog)</figcaption>
+        </figure>
+        <figure>
+            <img src="images/low_fft.png" alt="Hybrid">
+            <figcaption>Log FFT(Low Frequency of Efros)</figcaption>
+        </figure>
+        <figure>
+            <img src="images/high_fft.png" alt="Hybrid">
+            <figcaption>Log FFT(High Frequency of Dog)</figcaption>
+        </figure>
+        <figure>
+            <img src="images/hybrid_fft.png" alt="Hybrid">
+            <figcaption>Log FFT(Hybrid)</figcaption>
+        </figure>
+    </div>
 
 </body>
 
