@@ -151,6 +151,7 @@
 
     <h3>Finite Difference Operator</h3>
     <p>
+        I use finite difference operations to show the partial derivative in x and y of the cameraman image by convolving the image with the operators. Then I compute the gradient magnitude image. Finally, I turn this into an edge image by picking the appropriate threshold from the gradient magnitude.
         $$ D_x = \left[ 1 \ -1 \right], \quad D_y = \left[ \begin{array}{c} 1 \\ -1 \end{array} \right] $$
         $$ C_x = \text{cameraman} * D_x, \quad C_y = \text{cameraman} * D_y $$
 
@@ -515,10 +516,283 @@
     </div>
     I think all results look pretty good! I prefer the both color simply just because we can keep the color, so I generate the rest of the images above fully in color. It is interesting though, that in B/W we can hide the glow/shadowy effect that happens in the colored versions.
 
-
-
     <h3>Gaussian and Laplacian Stacks</h3>
+    <p>Algorithm for blending two different images:
+        <ol>
+            <li> Build Gaussian stack for both images: $$ G^A, G^B $$.</li>
+            <li> Build Laplacian stack for both images:
+                $$ L^A_i = G^A_i - G^A_{i+1}, \quad L^B = G^B_i - G^B_{i+1 }$$ </li>
+            <li>Add the lowest frequency of the Gaussian stack to the end of both Laplacian stacks.</li>
+            <li>Build Gaussian stack for mask: m. </li>
+            <li>Build a combined Laplacian stack L such that: $$ L_k = L_k^A \cdot m_k + K_k^B \cdot (1 - m_k)$$</li>
+            <li>Collapse L to obtain the blended image.</li>
+        </ol>
+    </p>
+    <h4>Blending an apple with an orange!</h4>
+    <div class="image-container">
+        <figure>
+            <img src="images/apple_g0.png" alt="Dog">
+            <figcaption>Apple</figcaption>
+        </figure>
+        <figure>
+            <img src="images/orange_g0.png" alt="Hybrid">
+            <figcaption>Orange</figcaption>
+        </figure>
+    </div>
+    <div class="image-container">
+        <p>Apple Gaussian Stack</p>
+        <figure>
+            <img src="images/apple_g0.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/apple_g1.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/apple_g2.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/apple_g3.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/apple_g4.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        <p>Apple Laplacian Stack</p>
+        <figure>
+            <img src="images/apple_l0.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/apple_l1.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/apple_l2.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/apple_l3.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/apple_g4.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        <p>Orange Gaussian Stack</p>
+        <figure>
+            <img src="images/orange_g0.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/orange_g1.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/orange_g2.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/orange_g3.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/orange_g4.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        <p>Orange Laplacian Stack</p>
+        <figure>
+            <img src="images/orange_l0.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/orange_l1.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/orange_l2.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/orange_l3.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/orange_g4.png" alt="Hybrid">
+        </figure>
+    </div>
+    <p>Recreation of Figure 3.42</p>
+    <div class="image-container">
+        <p>Level 0</p>
+        <figure>
+            <img src="images/left0_oraple.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/right0_oraple.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/combined0_oraple.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        <p>Level 2</p>
+        <figure>
+            <img src="images/left2_oraple.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/right2_oraple.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/combined2_oraple.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        <p>Level 4</p>
+        <figure>
+            <img src="images/left4_oraple.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/right4_oraple.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/combined4_oraple.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        Collapsed
+        <figure>
+            <img src="images/left_collapsed_oraple.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/right_collapsed_oraple.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/oraple.png" alt="Hybrid">
+        </figure>
+    </div>
+    <h3>Multiresolution Blending</h3>
+    <h4>Example 1) Oraple!</h4>
+    <div class="image-container">
+        <figure>
+            <img src="images/orange0.jpg" alt="Dog">
+            <figcaption>Orange</figcaption>
+        </figure>
+        <figure>
+            <img src="images/apple0.jpg" alt="Hybrid">
+            <figcaption>Apple</figcaption>
+        </figure>
+        <figure>
+            <img src="images/oraple_mask.png" alt="Hybrid">
+            <figcaption>Mask</figcaption>
+        </figure>
+        <figure>
+            <img src="images/oraple.png" alt="Hybrid">
+            <figcaption>Oraple</figcaption>
+        </figure>
+    </div>
+    <h4>Example 2) Tree with an eye! (irregular mask)</h4>
+    <div class="image-container">
+        <figure>
+            <img src="images/tree.jpg" alt="Dog">
+            <figcaption>Tree</figcaption>
+        </figure>
+        <figure>
+            <img src="images/eyes.jpg" alt="Hybrid">
+            <figcaption>Eyes</figcaption>
+        </figure>
+        <figure>
+            <img src="images/eyes_mask.jpg" alt="Hybrid">
+            <figcaption>Mask</figcaption>
+        </figure>
+        <figure>
+            <img src="images/tree_with_eyes.png" alt="Hybrid">
+            <figcaption>Oraple</figcaption>
+        </figure>
+    </div>
 
+    <h4>Example 3) Shrek Mona Lisa! (irregular mask)</h4>
+    <div class="image-container">
+        <figure>
+            <img src="images/mona_lisa.jpg" alt="Dog">
+            <figcaption>Mona Lisa</figcaption>
+        </figure>
+        <figure>
+            <img src="images/shrek.jpg" alt="Hybrid">
+            <figcaption>Shrek</figcaption>
+        </figure>
+        <figure>
+            <img src="images/mona_lisa_shrek_mask.jpg" alt="Hybrid">
+            <figcaption>Mask</figcaption>
+        </figure>
+        <figure>
+            <img src="images/mona_shrek.png" alt="Hybrid">
+            <figcaption>Oraple</figcaption>
+        </figure>
+    </div>
+
+    <h4>Example 4) Is it day or night?! (favorite)</h4>
+    <div class="image-container">
+        <figure>
+            <img src="images/day.jpg" alt="Dog">
+            <figcaption>Day</figcaption>
+        </figure>
+        <figure>
+            <img src="images/night.jpg" alt="Hybrid">
+            <figcaption>Night</figcaption>
+        </figure>
+        <figure>
+            <img src="images/day_night_mask.png" alt="Hybrid">
+            <figcaption>Mask</figcaption>
+        </figure>
+        <figure>
+            <img src="images/day_night.png" alt="Hybrid">
+            <figcaption>Day or night?</figcaption>
+        </figure>
+    </div>
+    <p>This is my favorite result, and below are the Laplacian stacks generated during the blending process: (Fig. 10 recreation)</p>
+    <div class="image-container">
+        <p>Level 0</p>
+        <figure>
+            <img src="images/left0_day_night.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/right0_day_night.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/combined0_day_night.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        <p>Level 2</p>
+        <figure>
+            <img src="images/left2_day_night.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/right2_day_night.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/combined2_day_night.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        <p>Level 4</p>
+        <figure>
+            <img src="images/left4_day_night.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/right4_day_night.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/combined4_day_night.png" alt="Hybrid">
+        </figure>
+    </div>
+    <div class="image-container">
+        Collapsed
+        <figure>
+            <img src="images/left_collapsed_day_night.png" alt="Dog">
+        </figure>
+        <figure>
+            <img src="images/right_collapsed_day_night.png" alt="Hybrid">
+        </figure>
+        <figure>
+            <img src="images/day_night.png" alt="Hybrid">
+        </figure>
+    </div>
+    <h3>Bells & Whistles</h3>
+    <p>Added <strong>color</strong> to everything!!</p>
+
+    <h3>Reflection</h3>
+    <p>I had a lot of fun with this project. The most important thing I learned was that you can do so much with image processing just by playing around with frequencies :) And that Gaussians are super useful in the CV space.</p>
 
 </body>
 
