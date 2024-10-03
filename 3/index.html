@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julia's Project 3 Image Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        p, li {
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: #000000;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;  /* Spacing between images */
+        }
+
+        .gallery-item {
+            position: relative;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .caption {
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 10px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+            background-color: #ffffff; /* White background */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            color: #333;
+            max-width: 200px; /* Adjust width as needed */
+            text-align: left;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-item {
+                width: 300px; /* Set width of each image container */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item {
+                width: 100%; /* Full width on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Project 3</h1>
+
+<p>
+    In this project, I create a "morph" animation of my face into someone else's face, compute the mean of a population of faces and extrapolate from a population mean to create a caricature of myself.
+    A morph is a simultaneous warp of the image shape and a cross-dissolve of the image colors. 
+</p>
+<img src="images/proj3.gif" alt="Image 1">
+
+<h2>Part 1. Defining Correspondences</h2>
+<p>
+    I took a picture of myself and my favorite celebrity, Jennifer Lawrence, for my morph! 
+    
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/julia.jpg" alt="Image 1">
+            <div class="caption">Me</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/jlaw.jpg" alt="Image 2">
+            <div class="caption">JLaw</div>
+        </div>
+    </div>    
+    
+</p>
+
+<p>
+    The warp will be controlled by defining a correspondence between the two pictures. For instance, a possible correspondence would be eye to eye, ear to ear, mouth to mouth, etc. I labeled 61 correspondences by hand among the two images.
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/correspondences.png" alt="Image 1">
+            <div class="caption">Using a tool to label correspondences</div>
+        </div>
+    </div>  
+</p>
+
+<p>
+    Now I need to provide a triangulation of these correspondences that will be used for morphing.
+    <ol>
+        <li>Calculate the mean point set between the two image correspondences.</li>
+        <li>Compute the Delaunay triangulation on the mean point set.</li>
+        <li>Use the <strong>same</strong> triangulation for each source image.</li>
+    </ol>
+
+    Note that using the same triangulation means that each correspondence will be part of the same triangle while the points individually are distinct. 
+</p>
+
+<p>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/me_triangle.png" alt="Image 1">
+            <div class="caption">Me Triangulation</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/jlaw_triangle.png" alt="Image 2">
+            <div class="caption">JLaw Triangulation</div>
+        </div>
+    </div>
+</p>
+
+<h2>Part 2. Computing the "Mid-way Face"
+</h2>
+
+<p>
+    Before computing the whole morph sequence, I computed the "mid-way face" of my images. This involves computing the average shape, warp both faces into that shape, and averaging the colors together.
+
+    <br> <br>My algorithm does the following:
+    <ol>
+        <li>Loop through all triangles in the Delaunay triangulation.</li>
+        <li>Compute an affine warp for each triangle in the two images, to warp the given image's triangle to the mean shape triangle. </li>
+        <li>Get all points inside the mean triangle.</li>
+        <li>Inverse warp these mean triangle points to get the pixel value in the source image.</li>
+    </ol>
+
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/midway_face.png" alt="Image 1">
+            <div class="caption">"Mid-way Face"</div>
+        </div>
+    </div> 
+</p>
+
+<h2>Part 3. The Morph Sequence</h2>
+
+<p>
+    To create a morph sequence from one face to another, we can repeat the morphing process from Part 2 over a time interval t. The variable t actually allows us to linearly interpolate the amount of warping and cross-dissolving. We increase each parameter from [0, 1] over the course of the morph.
+    Here is the full morph sequence from my face to Jennifer Lawrence's face!
+    <div class="gallery">
+        <div class="gallery-item">
+            <video controls>
+                <source src="images/morph.mp4" type="video/mp4">
+            </video>
+            <div class="caption">Morph Sequence Video</div>
+        </div>
+    </div>
+</p>
+
+</body>
+</html>
