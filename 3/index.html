@@ -149,7 +149,7 @@
 </h2>
 
 <p>
-    Before computing the whole morph sequence, I computed the "mid-way face" of my images. This involves computing the average shape, warp both faces into that shape, and averaging the colors together.
+    Before computing the whole morph sequence, I computed the "mid-way face" of my images. This involves computing the average shape, warping both faces into that shape, and averaging the colors together.
 
     <br> <br>My algorithm does the following:
     <ol>
@@ -174,12 +174,72 @@
     Here is the full morph sequence from my face to Jennifer Lawrence's face!
     <div class="gallery">
         <div class="gallery-item">
-            <video controls>
-                <source src="images/morph.mp4" type="video/mp4">
-            </video>
-            <div class="caption">Morph Sequence Video</div>
+            <img src="images/morph.gif" alt="Morphing Animation">
+            <div class="caption">Morph Sequence GIF</div>
         </div>
     </div>
+</p>
+
+
+<h2>Part 4. The "Mean Face" of a Population
+</h2>
+
+<p>
+    I picked the Danes dataset of annotated faces. It contains 40 different Danish human faces, all without glasses. The gender distribution is 7 females and 33 males.
+
+    <br> <br>In order to compute the "mean face" of this population, I:
+    <ol>
+        <li>Compute the average face shape of the whole dataset.</li>
+        <li>Morph each of the faces in the dataset into the average shape. </li>
+        <li>Compute the average face of the population.</li>
+    </ol>
+
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/average_tri.png" alt="Image 1">
+        </div>
+    </div>
+    <p>Here is the average triangulation on an example face!</p>
+
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/example1.png" alt="Image 1">
+        </div>
+        <div class="gallery-item">
+            <img src="images/example1_morphed.png" alt="Image 1">
+        </div>
+        <div class="gallery-item">
+            <img src="images/example2.png" alt="Image 1">
+        </div>
+        <div class="gallery-item">
+            <img src="images/example2_morphed.png" alt="Image 1">
+        </div>
+    </div>
+    <p>Some funky morphed faces (into average Danes face).</p>
+
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/mean_danish_face.png" alt="Image 1">
+            <div class="caption">"Mean Face"</div>
+        </div>
+    </div> 
+
+    <p>Can I morph my own face into the average Danes face geometry? And can I morph the average Danes face into my geometry?</p>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/me2.jpg" alt="Image 1">
+        </div>
+        <div class="gallery-item">
+            <img src="images/me2_warped.png" alt="Image 1">
+        </div>
+        <div class="gallery-item">
+            <img src="images/mean_danish_face.png" alt="Image 1">
+        </div>
+        <div class="gallery-item">
+            <img src="images/dane_into_me.png" alt="Image 1">
+        </div>
+    </div>
+    <p>Not really.... it's hard to align my image well to the Dane image.</p>
 </p>
 
 </body>
