@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julia's Project 4 Image Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        p, li {
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: #000000;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;  /* Spacing between images */
+        }
+
+        .gallery-item {
+            position: relative;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .caption {
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 10px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+            background-color: #ffffff; /* White background */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            color: #333;
+            max-width: 200px; /* Adjust width as needed */
+            text-align: left;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-item {
+                width: 300px; /* Set width of each image container */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item {
+                width: 100%; /* Full width on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Project 4</h1>
+
+<p>
+    In this project, I play around with different aspects of image warping with a “cool” application -- image mosaicing. I will take photographs and create an image mosaic by registering, projective warping, resampling, and compositing them. We'll be doing this with homographies ;) and use them to warp images.
+
+
+</p>
+<img src="/cover_images/proj4_cover.jpg" alt="Image 1">
+
+<h2>Part 1. Shoot the Pictures</h2>
+
+<p>
+    I shot some pairs of pictures at the same center of projection (meaning all I did was rotate the camera around its axis). It's important to maintain the same COP because otherwise we create a new variable, depth, and our homography cannot handle this!
+    <div class="gallery">
+    <div class="gallery-item">
+        <img src="images/street_center.jpg" alt="Morphing Animation"> 
+    </div>
+    <div class="gallery-item">
+        <img src="images/street_right.jpg" alt="Morphing Animation"> 
+    </div>
+</div>
+<br> Outside my street.
+</p>
+<p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/tree_center.jpg" alt="Morphing Animation"> 
+    </div>
+    <div class="gallery-item">
+        <img src="images/tree_right.jpg" alt="Morphing Animation"> 
+    </div>
+</div>
+<br> Walk through Berkeley on the way to class.
+</p>
+<p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/room_center.jpg" alt="Morphing Animation"> 
+    </div>
+    <div class="gallery-item">
+        <img src="images/room_right.jpg" alt="Morphing Animation"> 
+    </div>
+</div>
+<br> Just cleaned my room!
+
+</p>
+
+
+<h2>Part 2. Recover Homographies</h2>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projective Transformation Equations</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <p>
+A homography is a projective mapping between any two images with the
+same center of projection. Given a pair of correspondences betwen the two images, we can recover the homography to warp one image into another.
+Let's setup a matrix for this, where (x,y) is a correspondence in the source image and (x', y') is a correspondence is the destination image. 
+  \[
+  \begin{bmatrix}
+  a & b & c \\
+  d & e & f \\
+  g & h & 1
+  \end{bmatrix}
+  \begin{bmatrix}
+  x \\
+  y \\
+  1
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+  wx' \\
+  wy' \\
+  w
+  \end{bmatrix}
+  \]
+</p>
+
+<p>
+    Expanding into a linear system...
+    \[
+    \begin{aligned}
+  ax + by + c &= wx' \\
+  dx + ey + f &= wy' \\
+  gx + hy + 1 &= w
+  \end{aligned}
+  \]
+
+  Substituting the last equation.
+
+  \[
+  \begin{aligned}
+  ax + by + c &= (gx + hy + 1)x' \\
+  dx + ey + f &= (gx + hy + 1)y'
+  \end{aligned}
+  \]
+</p>
+
+<p>Which simplifies to this in matrix form:
+
+<p>
+  \begin{bmatrix}
+  x & y & 1 & 0 & 0 & 0 & -xx' & -yx' \\
+  0 & 0 & 0 & x & y & 1 & -xy' & -yy'
+  \end{bmatrix}
+
+<h2>Part 3. Image Rectification</h2>
+
+<p>
+    Let's rectify some images! Since the homography requires correspondences on the source and destination image, and for these we don't have a "destination." We can specify points in the desired polygon we want to rectify to. For example, in the Steph Curry screen, I would select the four corners on the source image, and since we know that the screen is a rectangle, we would guess the width and height of a rectangle and use it as the destination correspondences. Same with the fish tank, I know the tank is a square so I use this information for the destination points.
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/curry.png" alt="Morphing Animation"> 
+        </div>
+        <div class="gallery-item">
+            <img src="images/curry_warped.png" alt="Morphing Animation"> 
+        </div>
+    </div>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/fishtank.png" alt="Morphing Animation"> 
+        </div>
+        <div class="gallery-item">
+            <img src="images/fishtank_warped.png" alt="Morphing Animation"> 
+        </div>
+    </div>
+</p>
+
+
+<h2>Part 4. Blend the images into a mosaic</h2>
+
+<p>
+    First I naively aligned the images by taking a correspondence point on the image we are warping, then applying the homography to it. We take the difference between this warped correspondence point and the old one, to get how much we should translate the image.
+</p>
+<p>
+<img src="images/street_mosaic.png">
+<br>
+<img src="images/tree_mosaic.png">
+<br>
+<img src="images/room_mosaic.png">
+</p>
+
+<p>
+    These look pretty good! But notice that on the 1st and 3rd especially you can make out where the two images are stacked since the lighting isn't perfect. 
+    <br>
+    <br> In order to fix this, I implemented a 2-band “Laplacian Stack” blending. I reused some of my code from Project 2 in order to get a Gaussian blur on the full mosaic for the low frequencies and then I computed the Laplacian stack to get the high frequencies of the warped and unwarped seperately (before aligning them into the mosaic) so that only one image's high frequency is operating a time. If we didn't seperate the images, we would get awkward borders on the high frequencies where the two images meet.
+    <img src="images/gaussian_room.png">
+    <img src="images/laplacian_room.png">
+</p>
+
+<p>
+    I then added the low frequencies to the high frequencies to produce a smoother transition between images for the final mosaic.
+
+    <img src="images/room_mosaic.png">
+    <img src="images/2band_room.png">
+</p>
+
+Now the edge looks much smoother! We can repeat this on the other mosaics, too.
+<p><img src="images/gaussian_street.png">
+    <img src="images/laplacian_street.png"></p>
+<p><img src="images/street_mosaic.png">
+    <img src="images/2band_street.png"></p>
+
+<p>
+
+    <img src="images/gaussian_tree.png">
+    <img src="images/laplacian_tree.png">
+
+</p>
+
+<p>
+    <img src="images/tree_mosaic.png">
+    <img src="images/2band_tree.png">
+
+</p>
+The tree mosaic is perfect!!! :D
+
+</p>
