@@ -96,16 +96,18 @@
 </p>
 <img src="/cover_images/proj4_cover.jpg" alt="Image 1">
 
+<h1>Part A: Image Warping and Mosaicing</h1>
+
 <h2>Part 1. Shoot the Pictures</h2>
 
 <p>
     I shot some pairs of pictures at the same center of projection (meaning all I did was rotate the camera around its axis). It's important to maintain the same COP because otherwise we create a new variable, depth, and our homography cannot handle this!
     <div class="gallery">
     <div class="gallery-item">
-        <img src="images/street_center.jpg" alt="Morphing Animation"> 
+        <img src="images/street_left.jpg" alt="Morphing Animation"> 
     </div>
     <div class="gallery-item">
-        <img src="images/street_right.jpg" alt="Morphing Animation"> 
+        <img src="images/street_center.jpg" alt="Morphing Animation"> 
     </div>
 </div>
 <br> Outside my street.
@@ -227,13 +229,17 @@ Let's setup a matrix for this, where (x,y) is a correspondence in the source ima
 
 <p>
     First I naively aligned the images by taking a correspondence point on the image we are warping, then applying the homography to it. We take the difference between this warped correspondence point and the old one, to get how much we should translate the image.
-</p>
-<p>
-<img src="images/street_mosaic.png">
-<br>
-<img src="images/tree_mosaic.png">
-<br>
-<img src="images/room_mosaic.png">
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/street_mosaic.png" alt="Morphing Animation"> 
+        </div>
+        <div class="gallery-item">
+            <img src="images/tree_mosaic.png" alt="Morphing Animation"> 
+        </div>
+        <div class="gallery-item">
+            <img src="images/room_mosaic.png" alt="Morphing Animation"> 
+        </div>
+    </div>
 </p>
 
 <p>
@@ -242,33 +248,172 @@ Let's setup a matrix for this, where (x,y) is a correspondence in the source ima
     <br> In order to fix this, I implemented a 2-band “Laplacian Stack” blending. I reused some of my code from Project 2 in order to get a Gaussian blur on the full mosaic for the low frequencies and then I computed the Laplacian stack to get the high frequencies of the warped and unwarped seperately (before aligning them into the mosaic) so that only one image's high frequency is operating a time. If we didn't seperate the images, we would get awkward borders on the high frequencies where the two images meet.
     <img src="images/gaussian_room.png">
     <img src="images/laplacian_room.png">
-</p>
-
-<p>
-    I then added the low frequencies to the high frequencies to produce a smoother transition between images for the final mosaic.
-
-    <img src="images/room_mosaic.png">
-    <img src="images/2band_room.png">
-</p>
-
-Now the edge looks much smoother! We can repeat this on the other mosaics, too.
-<p><img src="images/gaussian_street.png">
-    <img src="images/laplacian_street.png"></p>
-<p><img src="images/street_mosaic.png">
-    <img src="images/2band_street.png"></p>
-
-<p>
-
-    <img src="images/gaussian_tree.png">
-    <img src="images/laplacian_tree.png">
 
 </p>
+<p>    I then added the low frequencies to the high frequencies to produce a smoother transition between images for the final mosaic.
+
+</p>
+<img src="images/2band_room.png" alt="Morphing Animation"> 
+
+
 
 <p>
-    <img src="images/tree_mosaic.png">
+    Now the edge looks much smoother! We can repeat this on the other mosaics, too.
+
+    </p>
+    <img src="images/2band_street.png">
+<p>
+    
     <img src="images/2band_tree.png">
 
 </p>
-The tree mosaic is perfect!!! :D
+</p>
+
+<h1>Part B: Feature Matching and Autostitching</h1>
+<p>Currently I'm manually selecting correspondences for the homography... but what if we wanted to automate this process? In the second half of the project, I will incorporate automatic feature matching and auto-stitching.
+For steps 1-3, I will implement an algorithm from the paper “Multi-Image Matching using Multi-Scale Oriented Patches” by Brown et al. but with several simplifications. 
+</p>
+
+<h2>Step 1. Corner Detection</h2>
+<p>We want to choose points for our correspondences that are easy to find on both images. The best objects in a scene to do this are "corners," which are formally defined as points in the image with significant changes in all directions. I'll detect this by looking at peaks in the second moment matrix M. 
+    
+    $$ M = \sum_{(x,y) \in W} \begin{bmatrix} I_x^2 & I_x I_y \\ I_x I_y & I_y^2 \end{bmatrix} $$
+    
+    We want to know specifically, in which directions does it have the smallest/greatest change?
+    And since we don't care for any exact values, we just want the general shape of M, we can approximate it by looking at its eigenvalues. For example, case where our image only has derivatives in the x or y direction, our matrix is now axis aligned. We'd just want both eigenvalues to be large and similar in size for that point to be a corner. A good way to write this out is via the corner response function R.
+    $$ R = \frac{\det M}{\operatorname{Trace} M} $$
+    Now, to detect a corner we just look for points with large values of R, and then threshold accordingly.
+</p>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/room1.png" alt="Morphing Animation"> 
+        <div class="caption">Threshold=0.01</div>
+    </div>
+</div>
+
+<h2>Step 2. Adaptive Non-maximal Suppression (ANMS)</h2>
+<p>Two issues with the image above is that correspondences and clumped too close together and are not evenly distributed spatially. I implemented ANMS to remedy this.
+    The intuition behind this algorithm is that we are essentially scanning over a radius and only including the correspondence with maximum Harris corner strength within this allowed distance. This radius is dynamically determined per interest point. For each point, we find the minimum radius such that we see another point with a similar corner strength (enforced through C):
+    $$ r_i = \min_j \, |\mathbf{x}_i - \mathbf{x}_j|, \; \text{s.t.} \; f(\mathbf{x}_i) < c_{\text{robust}} f(\mathbf{x}_j), \; \mathbf{x}_j \in \mathcal{I} $$
+    Now we have a list of minimum radii for each Harris corner in step 1. Finally, we output the first 500 interest points of maximum radius.
+</p>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/room2.png" alt="Morphing Animation"> 
+        <div class="caption">ANMS 500, C=0.9</div>
+    </div>
+</div>
+
+<h2>Step 3. Feature Descriptor Extraction (MOPS)</h2>
+<p>Now that we know how to detect correspondences, how do we match them? I implement Multi-Scale Oriented Patches (MOPS) which takes each point and computes a descriptor vector to best represent the information around that correspondence:
+    
+    <ol>
+        <li>Blur the image to prevent aliasing.</li>
+        <li>For every interest point, create a 8x8 patch, sampled at a 5x scale (meaning we sample every 5 pixels in a 40 x 40 square).</li>
+        <li>Bias/gain normalize to reduce inconsistencies between descriptor vectors.</li>
+    </ol>
+    Here is an example patch (in color and before normalization).
+
+    </p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/MOPS.png" alt="Morphing Animation"> 
+    </div>
+</div>
+
+<h2>Step 4. Feature Matching</h2>
+<p>
+    We now have two images, each with their own collection of MOPS descriptor vectors, and are tasked with finding pairs of correspondences. I first implemented a naive nearest neighbor solution: for every patch in image 1, find the most similar patch in image 2 by its L2 distance. The main problem with this solution is that this assumes that every interest point in image 1 has a matching point in image 2. But we know this isn't true since the images contain different views! Thus we need a way to eliminate these "outliers": corners in image 1 but not image 2.
+    I use Lowe's trick for this, which is based off the idea that if the first nearest neighbor isn't that much better than the second, it must mean there isn't a good match. I take the distance 1-NN/2-NN and only include matches with a ratio <= 0.1 (based off of Figure 6 in paper).
+</p>
+
+<img src="images/lowe's.png" style="display: block; margin: auto; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+
+<h2>Step 5. Random Sample Consensus (RANSAC)</h2>
+<p>
+    The last problem we need to fix is since we are using least squares to the homography, we REALLY need to make sure there are no outliers. I will use the RANSAC iterative method, which is based off the idea that the general consensus of a group is more accurate than any "expert." 
+    The RANSAC loop:
+    <ol>
+        <li>Select four feature pairs (at random without replacement).</li>
+        <li>Compute an exact homography based off these pairs.</li>
+        <li>Compute inliers that "agree" (within a small distance) with the homography.</li>
+        <li>Store inlier set if greater in size than seen previously.</li>
+    </ol>
+    When we finish this loop, we re-compute least-squares H estimate on all of the maximum inlier set.
+</p>
+<img src="images/RANSAC.png" style="display: block; margin: auto; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+
+<p>I reran the mosaic pipeline on the three images, but this time using automatic feature detection and matching.</p>
+
+<h2>Results + Reflection!</h2>
+
+<p>
+    I had a lot of fun implementing this project! Before even starting, it amazed me that images are 2D and have no information about depth, and still our brain pieces together "depth"-like information based off experiences. This means that we can tell in a 2D image what is in front and behind another without seeing the scene in real life. While reading Brown's paper, I found the Harris corner detection method to be really cool. There are so many uses for gradients and calculus turns out to be very simple!
 
 </p>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/room_mosaic.png" alt="Morphing Animation"> 
+        <div class="caption">Manual</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/auto_room.png" alt="Morphing Animation"> 
+        <div class="caption">Automatic</div>
+    </div>
+</div>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/2band_room.png" alt="Morphing Animation"> 
+        <div class="caption">Manual 2-band</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/2band_auto_room.png" alt="Morphing Animation"> 
+        <div class="caption">Automatic 2-band</div>
+    </div>
+</div>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/street_mosaic.png" alt="Morphing Animation"> 
+        <div class="caption">Manual</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/auto_street.png" alt="Morphing Animation"> 
+        <div class="caption">Automatic</div>
+    </div>
+</div>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/2band_street.png" alt="Morphing Animation"> 
+        <div class="caption">Manual 2-band</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/2band_auto_street.png" alt="Morphing Animation"> 
+        <div class="caption">Automatic 2-band</div>
+    </div>
+</div>
+
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/tree_mosaic.png" alt="Morphing Animation"> 
+        <div class="caption">Manual</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/auto_tree.png" alt="Morphing Animation"> 
+        <div class="caption">Automatic</div>
+    </div>
+</div>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/2band_tree.png" alt="Morphing Animation"> 
+        <div class="caption">Manual 2-band</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/2band_auto_tree.png" alt="Morphing Animation"> 
+        <div class="caption">Automatic 2-band</div>
+    </div>
+</div>
