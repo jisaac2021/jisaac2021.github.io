@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julia's Project 5 Image Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        p, li {
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: #000000;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;  /* Spacing between images */
+        }
+
+        .gallery-item {
+            position: relative;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .caption {
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 10px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+            background-color: #ffffff; /* White background */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            color: #333;
+            max-width: 200px; /* Adjust width as needed */
+            text-align: left;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-item {
+                width: 300px; /* Set width of each image container */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item {
+                width: 100%; /* Full width on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Projective Transformation Equations</title>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body>
+    
+
+<h1>Project 5</h1>
+
+<p>
+    In this project, I play around with different aspects of image warping with a “cool” application -- image mosaicing. I will take photographs and create an image mosaic by registering, projective warping, resampling, and compositing them. We'll be doing this with homographies ;) and use them to warp images.
+
+
+</p>
+<!-- <img src="/cover_images/proj4_cover.jpg" alt="Image 1"> -->
+
+<h1>Part A: Image Warping and Mosaicing</h1>
+
+<p>In part A I play around with diffusion models, implement diffusion sampling loops, and use them for other tasks such as inpainting and creating optical illusions. 
+</p>
+
+<h2>Part 1. Testing Prompts</h2>
+<p>
+
+    For the 3 text prompts, I display the caption and the output of the model. I also reflect on the quality of the outputs and their relationships to the text prompts.
+</p>
+
+<p>For num inference steps = 20.</p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/1.png" alt="Morphing Animation"> 
+        <div class="caption">an oil painting of a snowy mountain village
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/2.png" alt="Morphing Animation"> 
+        <div class="caption">a man wearing a hat</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/3.png" alt="Morphing Animation"> 
+        <div class="caption">a rocket ship
+        </div>
+    </div>
+</div>
+
+<p>
+    <ol>
+        <li>The oil painting image is definitely off a bit in that it looks more futuristic and not really textured in oil painting, but it is accurate to the prompt.</li>
+        <li>Good and relevant to prompt.</li>
+        <li>Good and relevant to prompt.</li>
+    </ol>
+</p>
+
+<p>Try a large num_inference_steps=200 (high quality).</p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/4.png" alt="Morphing Animation"> 
+        <div class="caption">an oil painting of a snowy mountain village
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/5.png" alt="Morphing Animation"> 
+        <div class="caption">a man wearing a hat</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/6.png" alt="Morphing Animation"> 
+        <div class="caption">a rocket ship
+        </div>
+    </div>
+</div>
+
+<p>
+    <ol>
+        <li>Looks very similar to the previous style but definitely improved in looking more like an painting, not sure if its super oil painting-like but more like a painting.</li>
+        <li>We can see a man wearing a hat but it is strange that he is on a TV-like object.</li>
+        <li>Good and relevant to prompt.</li>
+    </ol>
+</p>
+
+<p>Try a small num_inference_steps=5 (low quality).</p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/7.png" alt="Morphing Animation"> 
+        <div class="caption">an oil painting of a snowy mountain village
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/8.png" alt="Morphing Animation"> 
+        <div class="caption">a man wearing a hat</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/9.png" alt="Morphing Animation"> 
+        <div class="caption">a rocket ship
+        </div>
+    </div>
+</div>
+
+<p>
+    <ol>
+        <li>Interestingly enough, this is actually the best oil painting since it looks most like the texture of an oil painting. But it seems like the rest of the images also have some sort of texture to them.</li>
+        <li> Hard to tell if someone is actually wearing a hat here (I assume its the top guy). This image is not very good.</li>
+        <li>Good rocket ship, but the upsampling model doesn't do well.</li>
+    </ol>
+</p>
+
+
+<h2>Part 2. Implementing the Forward Process</h2>
+<p>
+    A key part of diffusion is the forward process, which takes a clean image and adds noise to it. In this part, we will write a function to implement this. The forward process is defined by:
+    $$ x_t = \sqrt{\bar{\alpha}_t} x_0 + \sqrt{1 - \bar{\alpha}_t} \boldsymbol{\epsilon} \quad \text{where } \boldsymbol{\epsilon} \sim \mathcal{N}(0, 1)
+     $$
+    Here I take a test image of the Camponile and apply the forward function at levels 0 (no noise), 250, 500, and 750.
+</p>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/0.png" alt="Morphing Animation"> 
+        <div class="caption">Berkeley Campanile
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/250.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Campanile at t=250
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/500.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Campanile at t=500
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/750.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Campanile at t=750
+        </div>
+    </div>
+</div>
+
+<h2>Part 3. Classical Denoising</h2>
+
+<p>Let's try to denoise these images using classical methods. Again, take noisy images for timesteps [250, 500, 750], but use Gaussian blur filtering to try to remove the noise. Getting good results should be quite difficult, if not impossible.</p>
+
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/250gaus.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Vs. Gaussian Blur Denoising Campanile at t=250
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/500gaus.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Vs. Gaussian Blur Denoising Campanile at t=500
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/750gaus.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Vs. Gaussian Blur Denoising Campanile at t=750
+        </div>
+    </div>
+</div>
+
+<h2>Part 4. One-Step Denoising</h2>
+
+<p>
+    For the 3 noisy images from 1.2 (t = [250, 500, 750]):
+    <ol>
+        <li>Using the UNet, denoise the image by estimating the noise.</li>
+        <li>Estimate the noise in the new noisy image, by passing it through stage_1.unet.
+        </li>
+        <li>Remove the noise from the noisy image to obtain an estimate of the original image.
+        </li>
+        <li>Visualize the original image, the noisy image, and the estimate of the original image.
+
+        </li>
+    </ol>
+</p>
+
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/250denoise.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Vs. One-Step Denoised Campanile at t=250
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/500denoise.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Vs. One-Step Denoised Campanile at t=500
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/750denoise.png" alt="Morphing Animation"> 
+        <div class="caption">Noisy Vs. One-Step Denoised Campanile at t=750
+        </div>
+    </div>
+</div>
+
+<h2>Part 4. Iterative Denoising</h2>
+
+<p>In the last part, the denoising UNet does a much better job of projecting the image onto the natural image manifold, but it does get worse as you add more noise. This makes sense, as the problem is much harder with more noise!
+
+    But diffusion models are designed to denoise iteratively. In this part we will implement iterative denoising
+    .
+    First, I create a list of strided_timesteps. I start at timestep 990, and take step sizes of size 30 until you arrive at 0.
+
+    My iterative denoise function denoises an image starting at timestep timestep[i_start], applying the above formula to obtain an image at timestep t' = timestep[i_start + 1], and repeats iteratively until we arrive at a clean image.
+    
+    I add noise to the test image to timestep timestep[10] and display this image. Then run the iterative_denoise function on the noisy image, with i_start = 10, to obtain a clean image and display it. I display every 5th image of the denoising loop. I compare this to the "one-step" denoising method from the previous section, and to gaussian blurring.
+    </p>
+
+
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/90.png" alt="Morphing Animation"> 
+            <div class="caption">Noisy Campanile at t=90
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/240.png" alt="Morphing Animation"> 
+            <div class="caption">Noisy Campanile at t=240
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/390.png" alt="Morphing Animation"> 
+            <div class="caption">Noisy Campanile at t=390
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/540.png" alt="Morphing Animation"> 
+            <div class="caption">Noisy Campanile at t=540
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/690.png" alt="Morphing Animation"> 
+            <div class="caption">Noisy Campanile at t=690
+            </div>
+        </div>
+    </div>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/original.png" alt="Morphing Animation"> 
+        <div class="caption">Original
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/Iteratively Denoised Campanile.png" alt="Morphing Animation"> 
+        <div class="caption">Iteratively Denoised Campanile
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/One-Step Denoised Campanile .png" alt="Morphing Animation"> 
+        <div class="caption">One-Step Denoised Campanile
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/Gaussian Blurred Campanile .png" alt="Morphing Animation"> 
+        <div class="caption">Gaussian Blurred Campanile
+        </div>
+    </div>
+</div>
+
+<h2>Part 5. Diffusion Model Sampling</h2>
+<p>In step 4, we use the diffusion model to denoise an image. Another thing we can do with the iterative_denoise function is to generate images from scratch. We can do this by setting i_start = 0 and passing in random noise. This effectively denoises pure noise. I will show5 results of "a high quality photo".</p>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/sample1.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 1
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sample2.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 2
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sample3.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 3
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sample4.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 4
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sample5.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 5
+        </div>
+    </div>
+</div>
+
+<h2>Part 6. Classifier-Free Guidance (CFG)</h2>
+<p>
+    The generated images in the prior section are not very good. In order to greatly improve image quality (at the expense of image diversity), we can use a technicque called Classifier-Free Guidance.
+In CFG, we compute both a conditional and an unconditional noise estimate.
+</p>
+
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/sample1cfg.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 1 CFG
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sample2cfg.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 2 CFG
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sample3cfg.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 3 CFG
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sample4cfg.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 4 CFG
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/sample5cfg.png" alt="Morphing Animation"> 
+        <div class="caption">Sample 5 CFG
+        </div>
+    </div>
+</div>
+
+<h2>Part 7. Image-to-image Translation</h2>
+<p>In step 4, we take a real image, add noise to it, and then denoise. This effectively allows us to make edits to existing images. The more noise we add, the larger the edit will be. This works because in order to denoise an image, the diffusion model must to some extent "hallucinate" new things -- the model has to be "creative." Another way to think about it is that the denoising process "forces" a noisy image back onto the manifold of natural images.
+
+    Here, we're going to take the original test image, noise it a little, and force it back onto the image manifold without any conditioning. Effectively, we're going to get an image that is similar to the test image (with a low-enough noise level). This follows the SDEdit algorithm.
+
+    Here I show edits of the Camponile image, at noise levels [1, 3, 5, 7, 10, 20] with text prompt "a high quality photo"
+    I do the same with 2 of my own test images.</p>
+    <img src="images/sdedit.png" alt="Morphing Animation"> 
+
+    <p>This procedure works particularly well if we start with a nonrealistic image (e.g. painting, a sketch, some scribbles) and project it onto the natural image manifold.
+
+        I experiment by starting with hand-drawn or other non-realistic images and see how I can get them onto the natural image manifold in fun ways.</p>
+
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="images/img1.png" alt="Morphing Animation"> 
+                <div class="caption">Avocado from internet
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/img2.png" alt="Morphing Animation"> 
+                <div class="caption">Hand-drawn city during sunset
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/img3.png" alt="Morphing Animation"> 
+                <div class="caption">Hand-drawn flamingo
+                </div>
+            </div>
+        </div>
+        <img src="images/avocado.png" alt="Morphing Animation"> 
+        <img src="images/sunset.png" alt="Morphing Animation"> 
+        <img src="images/flamingo.png" alt="Morphing Animation"> 
+
+<p> We can use the same procedure to implement inpainting. Given an image and a binary mask,
+    impainting allows us to create a new image that has the same content where 
+     is 0, but new content wherever 
+     is 1.</p>
+
+     <img src="images/impainting.png" alt="Morphing Animation"> 
+
+
+<p>Now we will perform SDEdit but guide the projection with a text prompt.</p>
+<img src="images/textcond.png" alt="Morphing Animation"> 
+
+<h2>Part 8. Visual Anagrams</h2>
+<p>
+
+    We can also create optical illusions with diffusion models by including an intermediate step in the denoising process. If we want an image that looks like one prompt upside down, but another the right side up, then we can do the denoise step regularly, then flip the image and denoise again, then average the results in each step. We can then perform a reverse/denoising diffusion step with the averaged noise estimate.
+</p>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/an oil painting of people around a campfire .png" alt="Morphing Animation"> 
+        <div class="caption">an oil painting of people around a campfire
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/an oil painting of an old man .png" alt="Morphing Animation"> 
+        <div class="caption">an oil painting of an old man
+        </div>
+    </div>
+</div>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/a photo of a dog .png" alt="Morphing Animation"> 
+        <div class="caption">a photo of a dog
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/an oil painting of a snowy mountain village .png" alt="Morphing Animation"> 
+        <div class="caption">an oil painting of a snowy mountain village
+        </div>
+    </div>
+</div>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/a lithograph of waterfalls .png" alt="Morphing Animation"> 
+        <div class="caption">a lithograph of waterfalls
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/a lithograph of a skull .png" alt="Morphing Animation"> 
+        <div class="caption">a lithograph of a skull
+        </div>
+    </div>
+</div>
+
+<h2>Part 9. Hybrid Images</h2>
+<p>In this part we'll implement Factorized Diffusion and create hybrid images just like in project 2.
+
+    In order to create hybrid images with a diffusion model we can use a similar technique as above. We will create a composite noise estimate 
+    , by estimating the noise with two different text prompts, and then combining low frequencies from one noise estimate with high frequencies of the other.</p>
+
+    
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/hybrid1close.png" alt="Morphing Animation"> 
+            <div class="caption">Hybrid between a photo of a skull and a lithograph of waterfalls
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/hybrid2close.png" alt="Morphing Animation"> 
+            <div class="caption">Hybrid between a photo of a tiger and a photo of a cat
+
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/hybrid3close.png" alt="Morphing Animation"> 
+            <div class="caption">Hybrid between a photo of a lion and a photo of a dog
+            </div>
+        </div>
+    </div>
+
+    <h2>Bells & Whistles: Design a course logo!</h2>
+    <p> I used SDEdit on a photo of Professor Efros holding up a frame along with a binary mask of the inside of the frame to create two course logos. The first one placed a cartoon camera in it! What was cool about this is it naturally matched the scene so the camera is facing the right way and the colors align!</p>
+    <img src="images/courselogosteps.png" alt="Morphing Animation"> 
+    <img src="images/courselogo1.png" alt="Morphing Animation"> 
+    <img src="images/courselogo2.png" alt="Morphing Animation"> 
+
+<h1>Part B: Diffusion Models from Scratch!</h1>
+<p>I will create my own diffusional model from scratch! And train and test it on the MNIST dataset.</p>
+
+<h2>Step 1. Training a Single-Step Denoising UNet</h2>
+<p>Let's warmup by building a simple one-step denoiser. Given a noisy image 
+    z, we aim to train a denoiser D
+     such that it maps z
+     to a clean image x. To do so, we can optimize over an L2 loss: $$ L = \mathbb{E}_{z,x} \|D_\theta(z) - x\|^2    $$
+    
+    
+</p>
+
+<h2>1.1 Implementing the UNet</h2>
+
+<img src="images/unconditional_arch-1.png" alt="Image 1">
+
+<h2>1.2 Using the UNet to Train a Denoiser</h2>
+<p>
+    To train our denoiser, we need to generate training data pairs of (z, x)
+        , where each x
+         is a clean MNIST digit. For each training batch, we can generate 
+         from 
+         using the the following noising process:
+
+         $$ z = x + \sigma \epsilon, \quad \text{where } \epsilon \sim \mathcal{N}(0, \mathbf{I}).
+         $$
+         
+        I visualize the different noising processes over different values of sigma.
+</p>
+
+<img src="images/noised.png" alt="Image 1">
+
+<p>
+Now, I will train the model to perform denoising. I use the UNet architecture depicted with D = 128 hidden dimension. I use Adam optimizer with learning rate of 1e-4.
+</p>
+
+<img src="images/1.2-traininglosses.png" alt="Image 1">
+
+
+<p>Here I display sample results after the 1st epoch.
+</p>
+
+<img src="images/1.2-firstepoch.png" alt="Image 1">
+
+<p>Sample results after the 5th epoch.
+</p>
+<img src="images/1.2-fifthepoch.png" alt="Image 1">
+
+<p>I took the original 7 and the denoised 7 and visualized them as a 3D mesh.</p>
+<img src="images/seven3.jpg" alt="Image 1">
+<p> This is interesting because it shows that the noise operation is not compeltely invertable. We see a bit of the added noise around the edges of the 7!</p>
+
+<p>Our denoiser was trained on MNIST digits noised with 
+    epsilon = 0.5. Let's see how the denoiser performs on different 
+    epsilon values that it wasn't trained for.</p>
+
+<img src="images/1.2-differentsigmas.png" alt="Image 1">
+
+<h2>Step 2. Training a Diffusion Model</h2>
+<p>Now, we are ready for diffusion! I will train a UNet model that can iteratively denoise an image.
+Before, our UNet predicted the clean image. Now, we can change our UNet to predict the added noise 
+     (like in part 4A of the project). However, we saw in part A that one-step denoising does not yield good results. Instead, we need to iteratively denoise the image for better results.
+
+     Our final objective function is:
+    $$ L = \mathbb{E}_{\boldsymbol{\epsilon}, \mathbf{x}_0, t} \left\| \boldsymbol{\epsilon}_\theta(\mathbf{x}_t, t) - \boldsymbol{\epsilon} \right\|^2
+    $$
+</p>
+
+<h2>2.1 Adding Time Conditioning to UNet</h2>
+<p>We need a way to inject scalar t
+    into our UNet model to condition it. </p>
+
+    <img src="images/addtime.png" alt="Image 1">
+
+<p>This uses a new operator called FCBlock (fully-connected block) which we use to inject the conditioning signal into the UNet:</p>
+
+<img src="images/fcblock.png" alt="Image 1">
+
+<h2>2.2 Training the UNet</h2>
+<p>Training time! Basically, we pick a random image from the training set, a random 
+    t, and train the denoiser to predict the noise in 
+     We repeat this for different images and different 
+     values until the model converges and we are happy.
+    I use a batch size of 128 and train over 20 epochs. I again use Adam optimizer, this time with an initial learning rate of 1e-3. I also use an exponential learning rate decay scheduler with a gamma of $$ 0.1^{\left(1.0 / \text{num\_epochs}\right)}
+     $$ This can be implemented using scheduler = torch.optim.lr_scheduler.ExponentialLR(). 
+    </p>
+<img src="images/timeconditionallosses.png" alt="Image 1">
+<p>Sampling results for the time-conditioned UNet at 5 epochs.</p>
+<img src="images/time-epoch5.png" alt="Image 1">
+
+<p>Sampling results at 20 epochs.</p>
+<img src="images/time-epoch20.png" alt="Image 1">
+
+<h2>2.4 Adding Class-Conditioning to UNet</h2>
+<p>
+    To make the results better and give us more control for image generation, we can also optionally condition our UNet on the class of the digit 0-9. This will require adding 2 more FCBlocks to our UNet. Because we still want our UNet to work without it being conditioned on the class, we implement dropout where 10% of the time we drop the class conditioning vector 
+ by setting it to 0.
+
+ <img src="images/classtraininglosses.png" alt="Image 1">
+
+ <p>
+    Sampling results for the class-conditioned UNet for 5 epochs. I generate 4 instances of each digit.
+ </p>
+ <img src="images/class-5epochs.png" alt="Image 1">
+
+ <p>Samplings results at 20 epochs.</p>
+
+ <img src="images/class-20epochs.png" alt="Image 1">
+
+
+<h2>Reflection!</h2>
+
+<p>
+    It's really cool that diffusional models can seemingly produce images from complete noise! 
+</p>
