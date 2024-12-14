@@ -467,43 +467,50 @@ Once we estimate g, we can create the Radiance Map from per-pixel log radiance e
     </div>
 </p>
 
-To enhance the visibility of the HDR radiance map, we apply simple global tone-mapping operations to compress the dynamic range. We implement the local tone mapping method in Durand (2002):
-<ol>
-    <li><strong>Compute Intensity (I)</strong>: Average the color channels (R, G, B).</li>
-    <li><strong>Compute Chrominance Channels</strong>: Calculate the chrominance channels as follows:
-        <ul>
-            <li>R/I</li>
-            <li>G/I</li>
-            <li>B/I</li>
-        </ul>
-    </li>
-    <li><strong>Compute Log Intensity (L)</strong>: Calculate log intensity using the formula:
-        <pre>L = log2(I)</pre>
-    </li>
-    <li><strong>Filter with a Bilateral Filter</strong>: Apply a bilateral filter to the log intensity:
-        <pre>B = bf(L)</pre>
-    </li>
-    <li><strong>Compute the Detail Layer (D)</strong>: Calculate the detail layer:
-        <pre>D = L - B</pre>
-    </li>
-    <li><strong>Apply Offset and Scale to the Base (B')</strong>: Adjust the base as follows:
-        <ul>
-            <li>Offset (o): Set offset such that the maximum intensity of the base is 1. Since the values are in the log domain, set o = max(B).</li>
-            <li>Scale (s): Set the scale to achieve dR stops of dynamic range. Formula: <pre>s = dR / (max(B) - min(B))</pre></li>
-        </ul>
-        Try values between 2 and 8 for dR, with 4 or 5 providing a good result.</li>
-    <li><strong>Reconstruct the Log Intensity (O)</strong>: Reconstruct the log intensity as follows:
-        <pre>O = 2^(B' + D)</pre>
-    </li>
-    <li><strong>Reapply the Colors</strong>: Apply the chrominance back to the base intensity:
-        <pre>R', G', B' = O * (R/I, G/I, B/I)</pre>
-    </li>
-    <li><strong>Apply Gamma Compression</strong>: Apply gamma compression to adjust brightness. For example:
-        <pre>result = result.^0.5</pre>
-        Use values around 0.5 to achieve a well-balanced image.
-    </li>
-    <li><strong>Apply Global Intensity Scaling (Optional)</strong>: Optionally, scale the final result to adjust intensity globally.</li>
-</ol>
+To enhance the visibility of the HDR radiance map, we apply simple global tone-mapping operations to further compress the dynamic range. Hopefully we can see detail in both bright and dark regions! We implemented the following tone mapping operators to start:
+<ul>
+    <li>Global scaling: subtract the minimum value and rescale the resulting values to lie within [0, 1]</li>
+    <li>Global simple: First apply the pixel-wise transform \( E_i' = \frac{E_i}{1 + E_i} \)
+        then apply global scaling</li>
+    <li>Durand: <ol>
+        <li><strong>Compute Intensity (I)</strong>: Average the color channels (R, G, B).</li>
+        <li><strong>Compute Chrominance Channels</strong>: Calculate the chrominance channels as follows:
+            <ul>
+                <li>R/I</li>
+                <li>G/I</li>
+                <li>B/I</li>
+            </ul>
+        </li>
+        <li><strong>Compute Log Intensity (L)</strong>: Calculate log intensity using the formula:
+            <pre>L = log2(I)</pre>
+        </li>
+        <li><strong>Filter with a Bilateral Filter</strong>: Apply a bilateral filter to the log intensity:
+            <pre>B = bf(L)</pre>
+        </li>
+        <li><strong>Compute the Detail Layer (D)</strong>: Calculate the detail layer:
+            <pre>D = L - B</pre>
+        </li>
+        <li><strong>Apply Offset and Scale to the Base (B')</strong>: Adjust the base as follows:
+            <ul>
+                <li>Offset (o): Set offset such that the maximum intensity of the base is 1. Since the values are in the log domain, set o = max(B).</li>
+                <li>Scale (s): Set the scale to achieve dR stops of dynamic range. Formula: <pre>s = dR / (max(B) - min(B))</pre></li>
+            </ul>
+            Try values between 2 and 8 for dR, with 4 or 5 providing a good result.</li>
+        <li><strong>Reconstruct the Log Intensity (O)</strong>: Reconstruct the log intensity as follows:
+            <pre>O = 2^(B' + D)</pre>
+        </li>
+        <li><strong>Reapply the Colors</strong>: Apply the chrominance back to the base intensity:
+            <pre>R', G', B' = O * (R/I, G/I, B/I)</pre>
+        </li>
+        <li><strong>Apply Gamma Compression</strong>: Apply gamma compression to adjust brightness. For example:
+            <pre>result = result.^0.5</pre>
+            Use values around 0.5 to achieve a well-balanced image.
+        </li>
+        <li><strong>Apply Global Intensity Scaling</strong>: Optionally, scale the final result to adjust intensity globally.</li>
+    </ol></li>
+</ul> 
+
+
 <p>
     <div class="gallery">
         <div class="gallery-item">
@@ -557,3 +564,98 @@ To enhance the visibility of the HDR radiance map, we apply simple global tone-m
         </div>
     </div>
     </p>
+</div>
+    <p>Here are the results on the rest of the dataset!</p>
+
+
+<p>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/garage/global_scale.png" alt="Morphing Animation"> 
+            <div class="caption">Global Scale
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/garage/global_simple.png" alt="Morphing Animation"> 
+            <div class="caption">Global Simple</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/garage/durand.png" alt="Morphing Animation"> 
+            <div class="caption">Durand</div>
+        </div>
+    </div>
+    </p>
+
+    <p>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="images/garden/global_scale.png" alt="Morphing Animation"> 
+                <div class="caption">Global Scale
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/garden/global_simple.png" alt="Morphing Animation"> 
+                <div class="caption">Global Simple</div>
+            </div>
+            <div class="gallery-item">
+                <img src="images/garden/durand.png" alt="Morphing Animation"> 
+                <div class="caption">Durand</div>
+            </div>
+        </div>
+        </p>
+
+        <p>
+            <div class="gallery">
+                <div class="gallery-item">
+                    <img src="images/house/global_scale.png" alt="Morphing Animation"> 
+                    <div class="caption">Global Scale
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/house/global_simple.png" alt="Morphing Animation"> 
+                    <div class="caption">Global Simple</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="images/house/durand.png" alt="Morphing Animation"> 
+                    <div class="caption">Durand</div>
+                </div>
+            </div>
+            </p>
+
+            <p>
+                <div class="gallery">
+                    <div class="gallery-item">
+                        <img src="images/mug/global_scale.png" alt="Morphing Animation"> 
+                        <div class="caption">Global Scale
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/mug/global_simple.png" alt="Morphing Animation"> 
+                        <div class="caption">Global Simple</div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/mug/durand.png" alt="Morphing Animation"> 
+                        <div class="caption">Durand</div>
+                    </div>
+                </div>
+                </p>
+
+                <p>
+                    <div class="gallery">
+                        <div class="gallery-item">
+                            <img src="images/window/global_scale.png" alt="Morphing Animation"> 
+                            <div class="caption">Global Scale
+                            </div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="images/window/global_simple.png" alt="Morphing Animation"> 
+                            <div class="caption">Global Simple</div>
+                        </div>
+                        <div class="gallery-item">
+                            <img src="images/window/durand.png" alt="Morphing Animation"> 
+                            <div class="caption">Durand</div>
+                        </div>
+                    </div>
+                    </p>
+Some comments on the results! The simple scaling has so little contrast that the image almost appears white. The global scale suffers from the opposite issue, it is way too constrasted and is often too dark, highlighting mainly the dark and light parts of the images. The Durand tone mapping is the clear winner, as it does a great job maintaining detail in all regions of the image regardless of brightness. One side effect is that Durand produces images that look somewhat unnatural to the human eye, because of the saturation distribution. 
+
