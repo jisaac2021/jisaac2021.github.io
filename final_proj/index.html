@@ -107,15 +107,15 @@
     We chose to work on three mini-projects: 
     <ol>
         <li>Gradient Domain Fusion</li>
-        <li>FILL IN</li>
-        <li>FILL IN</li>
+        <li>Image Quilting</li>
+        <li>High Dynamic Range Imaging</li>
     </ol>
 
 
 </p>
 <!-- <img src="/cover_images/proj4_cover.jpg" alt="Image 1"> -->
 
-<h1>Gradient Domain Fushion</h1>
+<h1>Gradient Domain Fusion</h1>
 
 <p>This project explores gradient-domain processing, a simple technique with a broad set of applications including blending, tone-mapping, and non-photorealistic rendering. I will utilize "Poisson blending" to seamlessly blend an object or texture from a source image into a target image.
 </p>
@@ -272,3 +272,119 @@ Copy the solved values v_i into the target image.
     </div>
 
 <p> This is SOOOOO cool! And looks very realistic</p>
+
+
+<h1>Image Quilting</h1>
+
+<p>
+    This project focuses on taking various texture samples and either sythesizing a larger image from that texture, or giving a target image the appearance having the same texture as a texture sample.
+</p>
+
+<h2>Randomly Sampled Texture</h2>
+<p>
+    This is the most simple and naive method of synthesis in which randomly selected square patches from a sample are arranged to create a larger output image. Typically this will result in noticeable edges between different patches, as can be seen.
+</p>
+
+<p>Some randomly generated results are shown:</p>
+
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/quilting_brick_texture.png" alt="Brick Texture, approx. 190x190"> 
+            <div class="caption">Brick Texture, approx. 190x190
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/quilting_random_patch_15.png" alt="400x400, patch_size = 15"> 
+            <div class="caption">400x400, patch_size = 15</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/quilting_random_patch_25.png" alt="400x400, patch_size = 25"> 
+            <div class="caption">400x400, patch_size = 25</div>
+        </div>
+    </div>
+
+<h2>Overlapping Patches</h2>
+<p>
+    To improve results, we instead have overlapping patches, and from there costs for each patch will be computed and compared to select a patch that is a good fit (minimal cost). Conceptually this makes sense because we want to select neighboring patches whose edges are similar to our current patch's edges to minimize visual contrast. To maintain a stochastic element we have a tolerance variable tol, that indicates the patch can be selected uniformly at random from the tol least cost patches
+</p>
+
+<h4>Results</h4>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/quilting_brick_texture.png" alt="Morphing Animation"> 
+        <div class="caption">Brick Texture, approx. 190x190
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/quilting_overlapping_patch_size_30.png" alt="Morphing Animation"> 
+        <div class="caption">Overlapping Patches, patch_size=35, overlap=11, tol=5, 300x300</div>
+    </div>
+</div>
+
+<p>We can see that at first glance it now looks much more like a regular brick wall compared to the randomly sampled texture. Upon closer inspection and zooming in, edges of some patches are still noticeable, but the result is a noticeable improvement from the previous approach.</p>
+
+<h2>Seam Finding</h2>
+<p>
+    To further improve results, we can build on the previous approach by computing the minimum cost path in an overlap (which is not necessarily straight). This further reduces appearances of the edges and "blockiness" by allowing for more complex jagged boundaries to be utilized. In the case that the patch has multiple overlaps we simply define the mask as the intersection of the masks for each overlapping seam.
+</p>
+
+<h4>Results</h4>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/quilting_brick_texture.png" alt="Morphing Animation"> 
+        <div class="caption">Brick Texture, approx. 190x190
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/quilting_seamfinding_patchsize_35.png" alt="Morphing Animation"> 
+        <div class="caption">Overlapping Patches, patch_size=35, overlap=11, tol=5, 300x300/div>
+    </div>
+</div>
+
+<p>This result looks even more natural than the previous example because of the minimum cost boundaries being used instead, which are not fixed so visually it's less likely we notice some noisy pattern like the edges before.</p>
+
+
+<h2>Texture Transfer</h2>
+<p>
+    Using a similar method as the seam finding before, we can synthesize a texture sample that maintains the appearance of a target reference image. The main difference is that the cost must also consider differences between the target patch and the patch from the sample.
+</p>
+
+<h4>Results</h4>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/quilting_drawing_texture.png" alt="Morphing Animation"> 
+        <div class="caption">Drawing Texture
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/quilting_feynman.png" alt="Morphing Animation"> 
+        <div class="caption">Feynman Target Image</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/quilting_texture_patchsize_13_overlap_6.png" alt="Morphing Animation"> 
+        <div class="caption">Texture Transfer, patch_size=13, overlap=6, tol=5</div>
+    </div>
+</div>
+
+<p>After tuning lots of parameters we settled on patch_size=13, overlap=6, tol=5. We found that it offered a good balance of facial detail with incorporating the dark, fluffy lines of the drawing texture. I noticed smaller patches tended to maintain higher facial detail.</p>
+
+<h2>Bells and Whistles: Iterative Texture Transfer</h2>
+<p> 
+    As previously mentioned, the parameters seemed to affect the result a lot. By using an iterative method, we can start with a larger patch size, and then gradually decrease the patch size with each iteration and adjust the alpha weighting accordingly to better capture detail. The cost used is a weighted average of alpha * patch overlap error + (1 - alpha) * target error. As iterations increased patch size decreased and the value of alpha used increased (weighting patch overlap error more). We ran for 3 iterations with a initial patch size of 35, overlap=6, tol=5, and shrinking patch size by 1/3 each iteration.
+</p>
+
+<p>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/quilting_texture_patchsize_13_overlap_6.png" alt="Morphing Animation"> 
+            <div class="caption">Texture Transfer (above result)
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/quilting_iterative_texture.png" alt="Morphing Animation"> 
+            <div class="caption">Iterative Texture Transfer </div>
+        </div>
+    </div>
+</p>
+<p>Honestly, the results seem pretty similar but I notice the iterative texture transfer has slightly less noise in the hair when zooming in, and slightly more detail in the mouth region. </p>
+
