@@ -398,6 +398,21 @@ Copy the solved values v_i into the target image.
 <h4>Part 1. Radiance map construction and Part 2. Tone mapping</h4>
 <p>
     First I will recover a radiance map from a collection of images. I implement the algorithm detailed in Sections 2.1 and 2.2 of Debevec and Malik 1997's paper "Recovering High Dynamic Range Radiance Maps from Photographs."
+
+    First, we implemented the least-squares algorithm to estimate the g and log radiance values for each pixel according to the following equation:
+
+ according to the following equation from Debevec:
+ \[ 
+ \mathcal{O} = \sum_{i=1}^{N} \sum_{j=1}^{P} \left\{ w(Z_{ij}) \left[ g(Z_{ij}) - \ln E_i - \ln \Delta t_j \right]^2 \right\} + 
+ \lambda \sum_{z=Z_{\text{min}}+1}^{Z_{\text{max}}-1} \left\{ w(z) \left[ g(z-1) - 2g(z) + g(z+1) \right]^2 \right\}
+ \]
+
+Once we estimate g, we can create the Radiance Map from per-pixel log radiance estimates using this formula:
+ \[
+\ln E_i = 
+\frac{\sum_{j=1}^{P} w(Z_{ij}) \left[ g(Z_{ij}) - \ln \Delta t_j \right]}
+{\sum_{j=1}^{P} w(Z_{ij})}
+\]
 </p>
 
 <p>
