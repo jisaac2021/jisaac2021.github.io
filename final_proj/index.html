@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julia and Richard's Final Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        p, li {
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            color: #000000;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;  /* Spacing between images */
+        }
+
+        .gallery-item {
+            position: relative;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .caption {
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 10px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+            background-color: #ffffff; /* White background */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            color: #333;
+            max-width: 200px; /* Adjust width as needed */
+            text-align: left;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-item {
+                width: 300px; /* Set width of each image container */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item {
+                width: 100%; /* Full width on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Projective Transformation Equations</title>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body>
+    
+
+<h1>Final Project</h1>
+<h2>By Julia Isaac and Richard Yang</h2>
+
+
+<p>
+    We chose to work on three mini-projects: 
+    <ol>
+        <li>Gradient Domain Fusion</li>
+        <li>FILL IN</li>
+        <li>FILL IN</li>
+    </ol>
+
+
+</p>
+<!-- <img src="/cover_images/proj4_cover.jpg" alt="Image 1"> -->
+
+<h1>Gradient Domain Fushion</h1>
+
+<p>This project explores gradient-domain processing, a simple technique with a broad set of applications including blending, tone-mapping, and non-photorealistic rendering. I will utilize "Poisson blending" to seamlessly blend an object or texture from a source image into a target image.
+</p>
+
+<h2>Part 2.1. Toy Problem</h2>
+<p>
+    The implementation for gradient domain processing is not complicated, but it is easy to make a mistake, so let's start with a toy example. In this example we'll compute the x and y gradients from an image s, then use all the gradients, plus one pixel intensity, to reconstruct an image v.
+    Denote the intensity of the source image at (x, y) as s(x,y) and the values of the image to solve for as v(x,y). We have three objectives:
+    $$ 
+
+    \\  \min \big( (v(x+1, y) - v(x, y)) - (s(x+1, y) - s(x, y)) \big)^2 \quad \\
+    \\  \min \big( (v(x, y+1) - v(x, y)) - (s(x, y+1) - s(x, y)) \big)^2 \quad \\
+    \\ \min \big( (v(1, 1) - s(1, 1))^2 \big) \quad  \\  
+     $$
+</p>
+
+<p>The toy image reconstruction problem can be represented as a linear system of equations:</p>
+    <p>
+        \[
+        A \mathbf{v} = \mathbf{b}
+        \]
+    </p>
+    <p>where:</p>
+    <ul>
+        <li>\(\mathbf{v}\) is a vector of pixel values to solve for, of size \(imh \times imw\).</li>
+        <li>\(A\) is a sparse matrix of size \((\text{imh * (imw - 1) + (imh - 1) * imw + 1} \times \text{imh * imw})\) with coefficients defined by the gradient constraints.</li>
+        <li>\(\mathbf{b}\) is a vector of size \(\text{imh * (imw - 1) + (imh - 1) * imw + 1}\) representing the gradient differences and the known pixel value at \((0, 0)\).</li>
+    </ul>
+    <p>The system is constructed as follows:</p>
+    <ol>
+        <li>For each vertical gradient constraint (\(y+1, x\)):
+            \[
+            A[e, \text{im2var}[y+1, x]] = 1, \quad
+            A[e, \text{im2var}[y, x]] = -1, \quad
+            \mathbf{b}[e] = \text{toy}[y+1, x] - \text{toy}[y, x]
+            \]
+        </li>
+        <li>For each horizontal gradient constraint (\(y, x+1\)):
+            \[
+            A[e, \text{im2var}[y, x+1]] = 1, \quad
+            A[e, \text{im2var}[y, x]] = -1, \quad
+            \mathbf{b}[e] = \text{toy}[y, x+1] - \text{toy}[y, x]
+            \]
+        </li>
+        <li>For the top-left pixel:
+            \[
+            A[e, \text{im2var}[0, 0]] = 1, \quad
+            \mathbf{b}[e] = \text{toy}[0, 0]
+            \]
+        </li>
+    </ol>
+    <p>Finally, the solution is obtained by solving this optimization as a least squares problem:</p>
+    <p>
+        \[
+        \mathbf{v} = \arg\min_{\mathbf{v}} \|A \mathbf{v} - \mathbf{b}\|^2
+        \]
+    </p>
+
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/toy.png" alt="Morphing Animation"> 
+            <div class="caption">Toy
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/reconstructed toy.png" alt="Morphing Animation"> 
+            <div class="caption">Toy Reconstructed</div>
+        </div>
+    </div>
+
+<h2>Part 2.2. Poisson Blending</h2>
+<p>
+    <h4>Step 1</h4>
+Select source and target regions. Select the boundaries of a region in the source image and specify a location in the target image where it should be blended. Then, transform (e.g., translate) the source image so that indices of pixels in the source and target regions correspond.
+<h4>Step 2</h4>
+Solve the blending constraints:
+    \[
+    \mathbf{v} = \arg\min_{\mathbf{v}} 
+    \left( \sum_{i \in S, j \in \mathcal{N}_i \cap S} \big((v_i - v_j) - (s_i - s_j)\big)^2 
+    + \sum_{i \in S, j \in \mathcal{N}_i \cap \neg S} \big((v_i - t_j) - (s_i - s_j)\big)^2 \right)
+    \]
+
+<h4>Step 3</h4>
+Copy the solved values v_i into the target image.
+</p>
+
+<h4>Results</h4>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/image1.png" alt="Morphing Animation"> 
+        <div class="caption">Penguin + Ski
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/image1blended.png" alt="Morphing Animation"> 
+        <div class="caption">Penguin + Ski Blended</div>
+    </div>
+</div>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/image2.png" alt="Morphing Animation"> 
+        <div class="caption">Polar Bear + Water
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/image2blended.png" alt="Morphing Animation"> 
+        <div class="caption">Polar Bear + Water Blended</div>
+    </div>
+</div>
+
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/image3.png" alt="Morphing Animation"> 
+        <div class="caption">Blue Moon + Night Sky
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/image3blended.png" alt="Morphing Animation"> 
+        <div class="caption">Blue Moon + Night Sky Blended</div>
+    </div>
+</div>
+
+<p>Overall really great results! No failure cases. One thing to note is that the size of the mask is really important. Originally with the polar bear + water image, I didn't choose a very "tight" mask, something just like a simple box and this wasn't enough to produce a good result!</p>
+
+<h2>Bells and Whistles: Mixed Gradients</h2>
+<p>Here I follow the same steps as Poisson blending, but use the gradient in source or target with the larger magnitude as the guide, rather than solely the source gradient:
+    \[
+        \mathbf{v} = \underset{\mathbf{v}}{\arg\min} \, 
+        \sum_{i \in S, j \in \mathcal{N}_i \cap S} ((v_i - v_j) - d_{ij})^2 
+        + \sum_{i \in S, j \in \mathcal{N}_i \cap \neg S} ((v_i - t_j) - d_{ij})^2
+        \]
+</p>
+
+<p>\[
+    d_{ij} =
+    \begin{cases}
+    s_i - s_j, & \text{if } |s_i - s_j| > |t_i - t_j|, \\
+    t_i - t_j, & \text{otherwise}.
+    \end{cases}
+    \]</p>
+
+
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/image4.png" alt="Morphing Animation"> 
+            <div class="caption">Graffiti + Wall
+            </div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/image4blended.png" alt="Morphing Animation"> 
+            <div class="caption">Graffiti + Wall Blended</div>
+        </div>
+    </div>
+
+<p> This is SOOOOO cool! And looks very realistic</p>
