@@ -3,6 +3,7 @@
 <head>
     
     
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Julia and Richard's Final Project</title>
@@ -388,3 +389,77 @@ Copy the solved values v_i into the target image.
 </p>
 <p>Honestly, the results seem pretty similar but I notice the iterative texture transfer has slightly less noise in the hair when zooming in, and slightly more detail in the mouth region. </p>
 
+
+
+<h1>High Dynamic Range</h1>
+
+<p>
+    Modern cameras are unable to capture the full dynamic range of commonly encountered real-world scenes. In some scenes, even the best possible photograph will be partially under or over-exposed. Researchers and photographers commonly get around this limitation by combining information from multiple exposures of the same scene. In this project, I will automatically combine multiple exposures into a single high dynamic range radiance map, and then convert this radiance map to an image suitable for display through tone mapping.
+</p>
+
+<h4>Part 1. Radiance map construction</h4>
+<p>
+    First I will recover a radiance map from a collection of images. I implement the algorithm detailed in Sections 2.1 and 2.2 of Debevec and Malik 1997's paper "Recovering High Dynamic Range Radiance Maps from Photographs."
+</p>
+
+<p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/log1.png" alt="Morphing Animation"> 
+        <div class="caption">Exposures
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/hdr1mean.png" alt="Morphing Animation"> 
+        <div class="caption">Mean Radiance Map</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/hdr1.png" alt="Morphing Animation"> 
+        <div class="caption">Radiance Map</div>
+    </div>
+</div>
+</p>
+<p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/log2.png" alt="Morphing Animation"> 
+        <div class="caption">Exposures
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/bonsai/hdr_radiance_map_mean.png" alt="Morphing Animation"> 
+        <div class="caption">Mean Radiance Map</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/bonsai/hdr_radiance_map.png" alt="Morphing Animation"> 
+        <div class="caption">Radiance Map</div>
+    </div>
+</div>
+</p>
+
+<p>
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="images/chapel/log3.png" alt="Morphing Animation"> 
+        <div class="caption">Exposures
+        </div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/chapel/hdr_radiance_map_mean.png" alt="Morphing Animation"> 
+        <div class="caption">Mean Radiance Map</div>
+    </div>
+    <div class="gallery-item">
+        <img src="images/chapel/hdr_radiance_map.png" alt="Morphing Animation"> 
+        <div class="caption">Radiance Map</div>
+    </div>
+</div>
+</p>
+
+<h4>Part 2. Tone mapping</h4>
+To enhance the visibility of the HDR radiance map, we apply simple global tone-mapping operations to compress the dynamic range. Examples of such operators include:
+\[
+L' = \log(L), \quad L' = \sqrt{L}, \quad L' = \frac{L}{1 + L}.
+\]
+The resulting image intensities \( L' \) are then normalized to the range \([0, 255]\) to maximize contrast.
+
+We implement the local tone mapping method in Durand (2002).
